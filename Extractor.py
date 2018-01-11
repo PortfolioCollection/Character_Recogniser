@@ -33,8 +33,8 @@ def ImageToArray(image):
 
 
 def ImageToMatrix(image):
-    return numpy.asarray(image)
-
+    array = numpy.asarray(image)
+    return array
 
 if __name__ == "__main__":
     image = getImage()
