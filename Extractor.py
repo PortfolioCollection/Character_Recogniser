@@ -3,18 +3,19 @@ from tkinter import filedialog
 from PIL import Image
 import numpy as numpy
 
-def getImage():
+def getImage(filename):
     """Returns a two dimensional array of a chosen image's pixels"""
-    
+
+    """
     root = tk.Tk()
     root.withdraw()
     file_path = filedialog.askopenfilename()
     file = open(file_path)
-    
+    filename = file.name
     print(file.name)
-    
+    """
     try:
-        image = Image.open(file.name, 'r')
+        image = Image.open(filename, 'r')
     except Exception as e:
         print(e)
     
