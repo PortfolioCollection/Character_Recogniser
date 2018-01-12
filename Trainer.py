@@ -5,8 +5,9 @@ from PIL import Image
 
 
 def loop_images():
+    root = os.getcwd()
     for x in range(10):
-        os.chdir(os.getcwd()+"/train_images_sorted/" + str(x))
+        os.chdir(root +"/train_images_sorted/" + str(x))
         i = 0
         total = []
         for filename in os.listdir(os.getcwd()):

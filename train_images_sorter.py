@@ -17,9 +17,7 @@ def read():
     percent = 1
     for line in f:
         i += 1
-        string_1 = str(os.getcwd()) + "/train_images/" + file_name(i)
-        string_2 = str(os.getcwd()) + "/train_images_sorted/" + str(line) + "/" + file_name(i)
-        os.rename(string_1,string_2)
+        os.rename(str(os.getcwd()) + "/train_images/" + file_name(i), str(os.getcwd()) + "/train_images_sorted/" + str(line) + "/" + file_name(i))
         if i % 600 == 0:
             print(str(percent) + "%")
             percent += 1
