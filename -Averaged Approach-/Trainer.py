@@ -1,3 +1,5 @@
+import sys
+sys.path.append('..')
 import Extractor
 import os
 import numpy as np

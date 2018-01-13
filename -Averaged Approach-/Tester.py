@@ -1,4 +1,6 @@
 import os
+import sys
+sys.path.append('..')
 import numpy as np
 import Extractor
 
@@ -47,12 +49,8 @@ def matching_score(test, digit):
                 score += abs(invert_memory - invert_test)
     return score          
     
-
-
-if __name__ == "__main__":
-
-
-    STOP_AT = 500
+def run_test(num_tests=10000):
+    STOP_AT = min(num_tests,10000)
     PERCENTILE = STOP_AT/100
     
     answer_array = []
@@ -78,5 +76,10 @@ if __name__ == "__main__":
             break
 
     print(str(correct/index*100)+"% correct")
+
+if __name__ == "__main__":
+    run_test(500)
+
+    
 
     
