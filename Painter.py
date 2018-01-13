@@ -35,7 +35,7 @@ class Paint():
         self.result_label['text'] = 'Draw something!'
         global img
         array = np.full((280,280),255)
-        img = Image.fromarray(array.astype(np.uint8))
+        img = Image.fromarray(array.astype(np.uint8),PIL.IMAGE.NEAREST)
         img.save("output.tif")
         
     def predict(self):        
@@ -45,15 +45,16 @@ class Paint():
         #img = Image.fromarray(array.astype(np.uint8))
         #img.save("output.tif")
         global img
+        img = img.resize((28, 28),Image.ANTIALIAS)
         img.save("output.tif")
                                   
     def paint(self, event):
         if self.old_x and self.old_y:
-            self.canvas.create_line(self.old_x, self.old_y, event.x, event.y, width=1, fill='black', capstyle=ROUND)
-
+            self.canvas.create_line(self.old_x, self.old_y, event.x, event.y, width=10, fill='black', capstyle=ROUND)
+            
             global img
-            draw = ImageDraw.Draw(img) 
-            draw.line((self.old_x,self.old_y, event.x,event.y), fill=128)
+            draw = ImageDraw.Draw(img)
+            draw.line((self.old_x,self.old_y, event.x,event.y), fill=0, width = 1)
             
         self.old_x, self.old_y = event.x, event.y
         
