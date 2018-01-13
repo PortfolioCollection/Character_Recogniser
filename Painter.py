@@ -1,5 +1,12 @@
 from tkinter import *
+from PIL import Image
+from PIL import ImageDraw
+import numpy as np
 
+
+array = np.full((280,280),255)
+img = Image.fromarray(array.astype(np.uint8))
+img.save("output.tif")
 class Paint():
 
     def __init__(self):
@@ -26,15 +33,30 @@ class Paint():
     def clear(self):
         self.canvas.delete("all")
         self.result_label['text'] = 'Draw something!'
+        global img
+        array = np.full((280,280),255)
+        img = Image.fromarray(array.astype(np.uint8))
+        img.save("output.tif")
         
     def predict(self):        
         prediction = 'Something' # Call function here
-        self.result_label['text'] = 'Prediction: ' + prediction        
-    
+        self.result_label['text'] = 'Prediction: ' + prediction
+        #global array
+        #img = Image.fromarray(array.astype(np.uint8))
+        #img.save("output.tif")
+        global img
+        img.save("output.tif")
+                                  
     def paint(self, event):
         if self.old_x and self.old_y:
-            self.canvas.create_line(self.old_x, self.old_y, event.x, event.y, width=10, fill='black', capstyle=ROUND, smooth=TRUE)
-        self.old_x, self.old_y = event.x, event.y        
+            self.canvas.create_line(self.old_x, self.old_y, event.x, event.y, width=1, fill='black', capstyle=ROUND)
+
+            global img
+            draw = ImageDraw.Draw(img) 
+            draw.line((self.old_x,self.old_y, event.x,event.y), fill=128)
+            
+        self.old_x, self.old_y = event.x, event.y
+        
     
     def release(self, event):
         self.old_x, self.old_y = None, None
