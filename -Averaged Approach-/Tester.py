@@ -38,6 +38,27 @@ def test(answer_array,index,filename):
     return 0
 
 
+def test_one(img):
+
+    FOLDER_NAME = "-Averaged Approach-"
+    test = Extractor.ImageToMatrix(img)
+    os.chdir(os.getcwd()+"/"+FOLDER_NAME+"/")
+    os.chdir(os.getcwd()+"/trained_digits/")
+    scores = []
+    
+    for x in range(10):
+        trained_filename = str(x) + ".tif"    
+        
+        trained_image = Extractor.getImage(trained_filename)
+        trained = Extractor.ImageToMatrix(trained_image)            
+        
+        scores.append(matching_score(test, trained))
+    
+    guess = scores.index(min(scores))
+    confidence = (1 - min(scores)/(255*28*28)) * 100
+    os.chdir('..')
+    os.chdir('..')   
+    return guess
     
 def matching_score(test, digit):
     score = 0
