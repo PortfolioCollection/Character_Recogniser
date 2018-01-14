@@ -50,9 +50,7 @@ class Paint():
         global img
         img = img.resize((28, 28),Image.BILINEAR)
         img.save("output.tif")
-        darken(img)
-        
-        prediction = Tester.test_one(img)
+        prediction = Tester.test_one(darken(img))
         self.result_label['text'] = 'Prediction: ' + str(prediction)        
                                   
     def paint(self, event):
@@ -72,19 +70,24 @@ class Paint():
 def darken(img):
     
     matrix = Extractor.ImageToMatrix(img)
+    #print(matrix)
+    #print("===========================")
     matrix.setflags(write=1)
     darkest = 255
     for row in range(len(matrix)):
         for col in range(len(matrix[row])):
             if matrix[row][col] < darkest:
                 darkest = matrix[row][col]
-    # enhace the image     
+    # enhace the image
+    constant = 255//darkest
     for row in range(len(matrix)):
         for col in range(len(matrix[row])):
             if matrix[row][col]!=255:
-                matrix[row][col] -= darkest
-    img = Image.fromarray(matrix.astype(np.uint8))
-    img.save("enhaced.tif")        
+                matrix[row][col] = 255 - matrix[row][col] * constant
+    #print(matrix)            
+    new_img = Image.fromarray(matrix.astype(np.uint8))
+    new_img.save("enhaced.tif") 
+    return new_img
     
             
 if __name__ == '__main__':
