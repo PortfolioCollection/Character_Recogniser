@@ -2,6 +2,7 @@ from tkinter import *
 from PIL import Image
 from PIL import ImageDraw
 import numpy as np
+import math
 import Extractor
 sys.path.append('-Averaged Approach-')
 import Tester
@@ -83,11 +84,29 @@ def darken(img):
     for row in range(len(matrix)):
         for col in range(len(matrix[row])):
             if matrix[row][col]!=255:
-                matrix[row][col] = 255 - matrix[row][col] * constant
+                # Linear Fit                
+                # matrix[row][col] = 255 - matrix[row][col] * constant
+                
+                # root Fit
+                a,b = root_fit(darkest)[0], root_fit(darkest)[1]
+                matrix[row][col] = int(math.sqrt((matrix[row][col] + b)/ a))
     #print(matrix)            
     new_img = Image.fromarray(matrix.astype(np.uint8))
     new_img.save("enhaced.tif") 
     return new_img
+
+def root_fit(darkest_value):
+    # x = a y^2 + b
+    b = -1 * darkest_value
+    a = (255+b)/(255*255)
+    return [a,b]
+
+def quadratic_fit(darkest_value):
+    # y = a x^2 + b
+    a = 255/(255*255-darkest_value*darkest_value)
+    b = 255-255*255*a
+    return [a,b]
+    
     
             
 if __name__ == '__main__':
