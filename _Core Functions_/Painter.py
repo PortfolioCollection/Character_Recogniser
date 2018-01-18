@@ -93,7 +93,7 @@ def darken(img):
                 #matrix[row][col] = int(math.sqrt((matrix[row][col] + b)/ a))
     #print(matrix)            
     new_img = Image.fromarray(matrix.astype(np.uint8))
-    new_img.save("enhaced.tif") 
+    new_img.save("enhanced.tif") 
     return new_img
 
 def root_fit(darkest_value):
