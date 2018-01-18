@@ -1,18 +1,18 @@
+import os
 from tkinter import *
 from PIL import Image
 from PIL import ImageDraw
 import numpy as np
 import math
 import Extractor
-sys.path.append('-Averaged Approach-')
-import Tester
-sys.path.append('..')
-
-
+path = os.getcwd()
+os.chdir('..')
+sys.path.append(os.getcwd()+"/-Averaged Approach-")
+import Averaged_Tester
+os.chdir(path)
 
 array = np.full((280,280),255)
 img = Image.fromarray(array.astype(np.uint8))
-img.save("output.tif")
 class Paint():
 
     def __init__(self):
@@ -42,16 +42,17 @@ class Paint():
         global img
         array = np.full((280,280),255)
         img = Image.fromarray(array.astype(np.uint8))
-        # img.save("output.tif")
+        img.save("output.tif")
         
     def predict(self):
         #global array
         #img = Image.fromarray(array.astype(np.uint8))
         #img.save("output.tif")
         global img
+        
         img = img.resize((28, 28),Image.BILINEAR)
         img.save("output.tif")
-        prediction = Tester.test_one(darken(img))
+        prediction = Averaged_Tester.test_one(darken(img))
         self.result_label['text'] = 'Prediction: ' + str(prediction)        
                                   
     def paint(self, event):
@@ -81,15 +82,15 @@ def darken(img):
                 darkest = matrix[row][col]
     # enhace the image
     constant = 255//darkest
-    for row in range(len(matrix)):
-        for col in range(len(matrix[row])):
-            if matrix[row][col]!=255:
+    #for row in range(len(matrix)):
+    #    for col in range(len(matrix[row])):
+    #        if matrix[row][col]!=255:
                 # Linear Fit                
                 # matrix[row][col] = 255 - matrix[row][col] * constant
                 
                 # root Fit
-                a,b = root_fit(darkest)[0], root_fit(darkest)[1]
-                matrix[row][col] = int(math.sqrt((matrix[row][col] + b)/ a))
+                #a,b = root_fit(darkest)[0], root_fit(darkest)[1]
+                #matrix[row][col] = int(math.sqrt((matrix[row][col] + b)/ a))
     #print(matrix)            
     new_img = Image.fromarray(matrix.astype(np.uint8))
     new_img.save("enhaced.tif") 
@@ -110,4 +111,5 @@ def quadratic_fit(darkest_value):
     
             
 if __name__ == '__main__':
+    os.chdir('..')
     Paint()
