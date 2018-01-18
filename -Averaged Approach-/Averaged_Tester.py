@@ -1,15 +1,12 @@
 import os
 import sys
-sys.path.append('..')
 import numpy as np
+sys.path.append('../_Core Functions_')
 import Extractor
 
-
 def test(answer_array,index,filename):
-
     FOLDER_NAME = "-Averaged Approach-"
 
-    
     test_image = Extractor.getImage(filename)
     test = Extractor.ImageToMatrix(test_image)
     os.chdir('..')

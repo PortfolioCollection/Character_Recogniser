@@ -1,12 +1,12 @@
 import sys
-sys.path.append('..')
+sys.path.append('../_Core Functions_')
 import Extractor
 import os
 import numpy as np
 from PIL import Image
 
 
-def loop_images():
+def train_images():
     FOLDER_NAME = "/-Averaged Approach-"
     
     os.chdir('..')
@@ -65,4 +65,4 @@ def add_grayscale(g1, g2):
     
 
 if __name__ == "__main__":
-    loop_images();
+    train_images();
