@@ -82,18 +82,18 @@ def darken(img):
                 darkest = matrix[row][col]
     # enhace the image
     constant = 255//darkest
-    #for row in range(len(matrix)):
-    #    for col in range(len(matrix[row])):
-    #        if matrix[row][col]!=255:
+    for row in range(len(matrix)):
+        for col in range(len(matrix[row])):
+            if matrix[row][col]!=255:
                 # Linear Fit                
-                # matrix[row][col] = 255 - matrix[row][col] * constant
+                matrix[row][col] = 255 - matrix[row][col] * constant
                 
                 # root Fit
                 #a,b = root_fit(darkest)[0], root_fit(darkest)[1]
                 #matrix[row][col] = int(math.sqrt((matrix[row][col] + b)/ a))
     #print(matrix)            
     new_img = Image.fromarray(matrix.astype(np.uint8))
-    new_img.save("enhaced.tif") 
+    new_img.save("enhanced.tif") 
     return new_img
 
 def root_fit(darkest_value):
