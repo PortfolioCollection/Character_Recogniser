@@ -5,6 +5,19 @@ import os
 import numpy as np
 from PIL import Image
 
+class LLN:
+    def __init__(line):
+        self.line = line
+        self.connections = []
+    def link_to(node):
+        self.coonections.append(node)
+    def __str__():
+        return int(self.line[1]-self.line[0])
+
+class LL:
+    def __init__(self, head = None):
+        self.head = head
+    
 
 def train_images():
     FOLDER_NAME = "/-Averaged Approach-"
@@ -28,18 +41,39 @@ def read_image(filename):
     for row in range(len(grayscale)):
         left = 0
         right = 0
+        num = 0
+        lst = []
         for col in range(len(grayscale[row])):
             if start and grayscale[row][col] != 255:
                 start = False
                 left = col
             elif not start and grayscale[row][col] == 255:
                 start = True
+                num += 1
                 right = col-1
-                lr.append(("Line "+str(row)+":",left,right))
+                lst.append(left)
+                lst.append(right)
+        if num != 0:
+            lr.append(lst)
         start = True
     return lr
 
-#def record_left_right():
+def record_left_right(lr):
+    left = 0
+    right = 0
+    total = 0
+    for i in range(len(lr)-1):
+        seg = min(len(lr[i]),len(lr[i+1]))//2
+        
+        #print(seg)
+        for j in range(seg):
+            seg = seg -1
+            if lr[i][0+2*seg] > lr[i+1][0+2*seg]:
+                left += 1
+            if lr[i][1+2*seg] < lr[i+1][1+2*seg]:
+                right += 1
+            total += 1
+    return (left,right,total)
 
 #def record_segements():
 
@@ -49,4 +83,6 @@ if __name__ == "__main__":
     os.chdir('..')
     root = os.getcwd()
     os.chdir(root +"/train_images_sorted/0")
-    print(read_image("00002.tif"))
+    lr = read_image("00002.tif")
+    print(lr)
+    print(record_left_right(lr))
