@@ -15,7 +15,8 @@ def train_images():
     for number in range(10):
         os.chdir(root +"/train_images_sorted/" + str(number))
         for filename in os.listdir(os.getcwd()):
-            lr = read_image(filename)
+            image = Extractor.getImage(filename)
+            lr = read_image(image)
             lean = record_left_right(lr)
             segments = record_segment(lr)
             points.append((lean,segments))
@@ -25,8 +26,7 @@ def train_images():
     os.chdir(root+"/-KNN Approach-")
     save_file(points,numbers, "save.txt")
                         
-def read_image(filename):
-    image = Extractor.getImage(filename)
+def read_image(image):
     grayscale = Extractor.ImageToMatrix(image)
     r = np.zeros((grayscale.shape[0], grayscale.shape[1]), dtype=int)
     

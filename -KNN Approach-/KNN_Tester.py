@@ -10,8 +10,8 @@ import re
 def test(answer_array,index,filename):
     FOLDER_NAME = "-KNN Approach-"
     
-    
-    lr = KNN_Trainer.read_image(filename)
+    image = Extractor.getImage(filename)
+    lr = KNN_Trainer.read_image(img)
     lean = KNN_Trainer.record_left_right(lr)
     segments = KNN_Trainer.record_segment(lr)
 
@@ -44,6 +44,34 @@ def test(answer_array,index,filename):
     if answer_array[index] == int(optimal_number):
         return 1
     return 0
+
+def test_one(img):
+
+    FOLDER_NAME = "-KNN Approach-"
+    test = Extractor.ImageToMatrix(img)
+    os.chdir(os.getcwd()+"/"+FOLDER_NAME+"/")
+
+    lr = KNN_Trainer.read_image(img)
+    lean = KNN_Trainer.record_left_right(lr)
+    segments = KNN_Trainer.record_segment(lr)
+
+    neighbors = open("save.txt")
+
+    best_score = 100
+    optimal_number = -1
+    
+    for line in neighbors:
+        match = "line ([0-9]*): lean\(([0-9].[0-9]*)\) segment\(([0-9].[0-9]*)\) class\(([0-9])\)"
+        string = re.match(match, line)
+        train_line,train_lean,train_segments,train_number = string.group(1),string.group(2),string.group(3),string.group(4)
+        #print(train_line)
+        score = abs(lean-float(train_lean))+abs(segments-float(train_segments))
+        if score < best_score:
+            best_score = score
+            optimal_number = train_number
+    
+    os.chdir('..')  
+    return optimal_number
     
 def run_test(num_tests=10000):
     STOP_AT = min(num_tests,10000)

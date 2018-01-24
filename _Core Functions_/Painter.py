@@ -8,7 +8,9 @@ import Extractor
 path = os.getcwd()
 os.chdir('..')
 sys.path.append(os.getcwd()+"/-Averaged Approach-")
+sys.path.append(os.getcwd()+"/-KNN Approach-")
 import Averaged_Tester
+import KNN_Tester
 os.chdir(path)
 
 array = np.full((280,280),255)
@@ -52,7 +54,8 @@ class Paint():
         
         img = img.resize((28, 28),Image.BILINEAR)
         img.save("output.tif")
-        prediction = Averaged_Tester.test_one(darken(img))
+        #prediction = Averaged_Tester.test_one(darken(img))
+        prediction = KNN_Tester.test_one(darken(img))
         self.result_label['text'] = 'Prediction: ' + str(prediction)        
                                   
     def paint(self, event):
