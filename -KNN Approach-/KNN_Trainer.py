@@ -12,7 +12,7 @@ def train_images():
     root = os.getcwd()
     points = []
     numbers=[]
-    for number in range(2):
+    for number in range(10):
         os.chdir(root +"/train_images_sorted/" + str(number))
         for filename in os.listdir(os.getcwd()):
             lr = read_image(filename)

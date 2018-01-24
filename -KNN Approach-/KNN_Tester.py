@@ -1,6 +1,7 @@
 import os
 import sys
 import numpy as np
+import time
 sys.path.append('../_Core Functions_')
 import Extractor
 import KNN_Trainer
@@ -32,15 +33,15 @@ def test(answer_array,index,filename):
         if score < best_score:
             best_score = score
             optimal_number = train_number
-    print("Score: "+str(score))
-    print("Optimal Number: "+str(optimal_number))
+    #print("Score: "+str(score))
+    #print("Optimal Number: "+str(optimal_number))
                 
         
 
     os.chdir('..')
     os.chdir(os.getcwd()+"/test_images/")
-    print("Answer: "+str(answer_array[index]))
-    if answer_array[index] == optimal_number:
+    #print("Answer: "+str(answer_array[index]))
+    if answer_array[index] == int(optimal_number):
         return 1
     return 0
     
@@ -61,6 +62,7 @@ def run_test(num_tests=10000):
     correct = 0
     percent = 0
     os.chdir(os.getcwd()+"/test_images/")
+    start_time = time.time()
     for filename in os.listdir(os.getcwd()):
         correct += test(answer_array, index, filename)
         index+=1
@@ -69,12 +71,13 @@ def run_test(num_tests=10000):
             percent += 1
         if index == STOP_AT:
             break
-        break #comment this out later
-
+        #break #comment this out later
+    duration = (time.time()-start_time)
+    print("Seconds:"+str(duration))
     print(str(correct/index*100)+"% correct")
 
 if __name__ == "__main__":
-    run_test(1)
+    run_test(50)
 
     
 
