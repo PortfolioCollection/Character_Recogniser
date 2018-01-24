@@ -10,12 +10,20 @@ def train_images():
 
     os.chdir('..')
     root = os.getcwd()
-    os.chdir(root +"/train_images_sorted/" + "0")
     points = []
-    for filename in os.listdir(os.getcwd()):
-        lr = read_image(filename)
-        points.append(record_left_right(lr))
-    plot(points)
+    numbers=[]
+    for number in range(2):
+        os.chdir(root +"/train_images_sorted/" + str(number))
+        for filename in os.listdir(os.getcwd()):
+            lr = read_image(filename)
+            lean = record_left_right(lr)
+            segments = record_segment(lr)
+            points.append((lean,segments))
+            numbers.append(number)
+        print("Done "+str(number))
+    #plot(points)
+    os.chdir(root+"/-KNN Approach-")
+    save_file(points,numbers, "save.txt")
                         
 def read_image(filename):
     image = Extractor.getImage(filename)
@@ -61,8 +69,21 @@ def record_left_right(lr):
                 right += 1
             total += 1
             
-    # return (left,right,total)
-    return (left/total, right/total)
+    #return (left,right,total)
+    return left/total+right/total
+
+def record_segment(lr):
+    one = 0
+    two = 0
+    total = len(lr)-1
+    for i in range(len(lr)-1):
+        seg = len(lr[i])
+        if seg == 2:
+            one+=1
+        elif seg == 4:
+            two+=1
+    #return (one, two, total)
+    return one/(3*total) +  2*two/(3*total)
 def plot(data):
     x = []
     y = []
@@ -74,6 +95,13 @@ def plot(data):
     plt.axis([0, 1, 0, 1])
     plt.show()
 
+def save_file(array, numbers, filename):
+    file=open(filename,"w")
+    line = 1
+    for element in array:
+        file.write("line "+str(line)+": lean("+str(element[0])+") segment("+str(element[1])+") class("+str(numbers[line-1])+")\n")
+        line+=1
+    file.close()
 #def record_segements():
 
 #def record_inc_dec():
@@ -81,4 +109,8 @@ def plot(data):
 if __name__ == "__main__":
     train_images()
     # print(lr)
-    # print(record_left_right(lr))
+    #os.chdir('..')
+    #root = os.getcwd()
+    #os.chdir(root +"/train_images_sorted/" + "1")
+    #lr = read_image("00004.tif")
+    #print(record_segment(lr))
