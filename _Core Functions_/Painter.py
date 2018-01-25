@@ -56,7 +56,7 @@ class Paint():
         img.save("output.tif")
         #prediction = Averaged_Tester.test_one(darken(img))
         prediction = KNN_Tester.test_one(darken(img))
-        self.result_label['text'] = 'Prediction: ' + str(prediction)        
+        self.result_label['text'] = 'Prediction: ' + str(prediction)
                                   
     def paint(self, event):
         if self.old_x and self.old_y:

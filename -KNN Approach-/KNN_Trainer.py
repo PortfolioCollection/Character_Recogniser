@@ -16,20 +16,20 @@ def train_images():
         os.chdir(root +"/train_images_sorted/" + str(number))
         for filename in os.listdir(os.getcwd()):
             image = Extractor.getImage(filename)
-            lr = read_image(image)
+            grayscale = Extractor.ImageToMatrix(image)
+            r = np.zeros((grayscale.shape[0], grayscale.shape[1]), dtype=int)
+            lr = read_image(grayscale)
             lean = record_left_right(lr)
             segments = record_segment(lr)
-            points.append((lean,segments))
+            outside = inside_outside(lr,grayscale)
+            points.append((lean,segments,outside))
             numbers.append(number)
         print("Done "+str(number))
     #plot(points)
     os.chdir(root+"/-KNN Approach-")
     save_file(points,numbers, "save.txt")
                         
-def read_image(image):
-    grayscale = Extractor.ImageToMatrix(image)
-    r = np.zeros((grayscale.shape[0], grayscale.shape[1]), dtype=int)
-    
+def read_image(grayscale):
     lr = []
     start = True
     
@@ -52,6 +52,33 @@ def read_image(image):
             lr.append(lst)
         start = True
     return lr
+        
+
+def inside_outside(lr,image):
+    inside = 0
+    outside = 0
+    for i in range(len(lr)-1):
+        for j in lr[i]:
+            if i > 0:
+                if image[i-1][j] > 230:
+                    outside+=1
+                    continue
+            if j > 0:
+                if image[i][j-1] > 250:
+                    outside+=1
+                    continue
+            if j < 27:
+                if image[i][j+1] > 250:
+                    outside+=1
+                    continue
+            if i < 27:
+                if image[i+1][j] > 250:
+                    outside+=1
+                    continue
+            inside+=1
+    value = outside/(inside+outside)
+    #print(value)
+    return value
 
 def record_left_right(lr):
     left = 0
@@ -99,7 +126,8 @@ def save_file(array, numbers, filename):
     file=open(filename,"w")
     line = 1
     for element in array:
-        file.write("line "+str(line)+": lean("+str(element[0])+") segment("+str(element[1])+") class("+str(numbers[line-1])+")\n")
+        file.write("line "+str(line)+": lean("+str(element[0])+") segment("+str(element[1])+") outside("+str(element[2])+
+                   ") class("+str(numbers[line-1])+")\n")
         line+=1
     file.close()
 #def record_segements():

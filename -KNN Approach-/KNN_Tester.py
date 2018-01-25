@@ -11,10 +11,12 @@ def test(answer_array,index,filename):
     FOLDER_NAME = "-KNN Approach-"
     
     image = Extractor.getImage(filename)
-    lr = KNN_Trainer.read_image(img)
+    grayscale = Extractor.ImageToMatrix(image)
+    r = np.zeros((grayscale.shape[0], grayscale.shape[1]), dtype=int)
+    lr = KNN_Trainer.read_image(grayscale)
     lean = KNN_Trainer.record_left_right(lr)
     segments = KNN_Trainer.record_segment(lr)
-
+    outside = KNN_Trainer.inside_outside(lr,grayscale)
 
     os.chdir('..')
     os.chdir(os.getcwd()+"/"+FOLDER_NAME+"/")
@@ -25,11 +27,11 @@ def test(answer_array,index,filename):
     optimal_number = -1
     
     for line in neighbors:
-        match = "line ([0-9]*): lean\(([0-9].[0-9]*)\) segment\(([0-9].[0-9]*)\) class\(([0-9])\)"
+        match = "line ([0-9]*): lean\(([0-9].[0-9]*)\) segment\(([0-9].[0-9]*)\) outside\(([0-9].[0-9]*)\) class\(([0-9])\)"
         string = re.match(match, line)
-        train_line,train_lean,train_segments,train_number = string.group(1),string.group(2),string.group(3),string.group(4)
+        train_line,train_lean,train_segments,train_outside,train_number = string.group(1),string.group(2),string.group(3),string.group(4),string.group(5)
         #print(train_line)
-        score = abs(lean-float(train_lean))+abs(segments-float(train_segments))
+        score = abs(lean-float(train_lean))+abs(segments-float(train_segments))+abs(outside-float(train_outside))
         if score < best_score:
             best_score = score
             optimal_number = train_number
@@ -50,20 +52,21 @@ def test_one(img):
     FOLDER_NAME = "-KNN Approach-"
     test = Extractor.ImageToMatrix(img)
     os.chdir(os.getcwd()+"/"+FOLDER_NAME+"/")
-
-    lr = KNN_Trainer.read_image(img)
+    grayscale = Extractor.ImageToMatrix(img)
+    r = np.zeros((grayscale.shape[0], grayscale.shape[1]), dtype=int)
+    lr = KNN_Trainer.read_image(grayscale)
     lean = KNN_Trainer.record_left_right(lr)
     segments = KNN_Trainer.record_segment(lr)
-
+    outside = KNN_Trainer.inside_outside(lr,grayscale)
     neighbors = open("save.txt")
 
     best_score = 100
     optimal_number = -1
     
     for line in neighbors:
-        match = "line ([0-9]*): lean\(([0-9].[0-9]*)\) segment\(([0-9].[0-9]*)\) class\(([0-9])\)"
+        match = "line ([0-9]*): lean\(([0-9].[0-9]*)\) segment\(([0-9].[0-9]*)\) outside\(([0-9].[0-9]*)\) class\(([0-9])\)"
         string = re.match(match, line)
-        train_line,train_lean,train_segments,train_number = string.group(1),string.group(2),string.group(3),string.group(4)
+        train_line,train_lean,train_segments,train_outside,train_number = string.group(1),string.group(2),string.group(3),string.group(4),string.group(5)
         #print(train_line)
         score = abs(lean-float(train_lean))+abs(segments-float(train_segments))
         if score < best_score:
@@ -105,7 +108,7 @@ def run_test(num_tests=10000):
     print(str(correct/index*100)+"% correct")
 
 if __name__ == "__main__":
-    run_test(50)
+    run_test(500)
 
     
 

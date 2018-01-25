@@ -22,11 +22,11 @@ def test(answer_array,index,filename):
         
         for filename in os.listdir(os.getcwd()):
             trained_image = Extractor.getImage(filename)
-            trained_image = crop_image(trained_image)
-            trained_image = ImageOps.fit(trained_image, (len(test[0]),len(test)), Image.ANTIALIAS)
+            #trained_image = crop_image(trained_image)
+            #trained_image = ImageOps.fit(trained_image, (len(test[0]),len(test)), Image.ANTIALIAS)
             trained = Extractor.ImageToMatrix(trained_image)
-            
             scores = add_score(scores, x, matching_score(test, trained), NN)
+            #print("done a file")
         os.chdir('..')
 
 
