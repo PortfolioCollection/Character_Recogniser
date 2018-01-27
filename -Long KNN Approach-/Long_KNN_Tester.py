@@ -8,10 +8,10 @@ import Extractor
 import Manipulate_Image
 
 def test(answer_array,index,filename):
-    NN = 7
+    NN = 5
 
     test_image = Extractor.getImage(filename)
-    test_image = Manipulate_Image.crop_image(test_image)
+    # test_image = Manipulate_Image.crop_image(test_image)
     test = Extractor.ImageToMatrix(test_image)
     os.chdir('..')
     os.chdir(os.getcwd()+"/"+"train_images_sorted"+"/")
@@ -52,18 +52,22 @@ def predict(scores, NN):
 
     
 def add_score(scores, digit, element, NN):
+    # print(scores)
+    # print((digit, element))
     total = 0
-    worst = (69,0)
+    worst = [69,0]
     for d in scores:
         for i in range(len(scores[d])):
             total += 1
-            if scores[d][i] >= worst[1]:
-                worst = (d, i)
+            if len(scores[d]) >  worst[1] and scores[d][i] >= scores[d][worst[1]]:
+                worst = [d, i]
 
-    if total >= NN:
+    if total >= NN and element <= scores[worst[0]][worst[1]]:
         del scores[worst[0]][worst[1]]
-    scores[digit].append(element)
-    
+        scores[digit].append(element)
+    if total < NN:
+        scores[digit].append(element)
+        
     return scores
             
 
