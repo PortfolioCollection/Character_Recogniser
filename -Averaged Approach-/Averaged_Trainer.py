@@ -1,10 +1,12 @@
+#--------Hopping-------#
+import os
 import sys
 sys.path.append('../_Core Functions_')
+#----CUSTOM CLASSES-----#
 import Extractor
-import os
-import numpy as np
+#---SUPPORT LIBRARIES---#
 from PIL import Image
-
+import numpy as np
 
 def train_images():
     FOLDER_NAME = "/-Averaged Approach-"

@@ -13,7 +13,7 @@ def run_approach(num):
 def train_approach():
     KNN_Trainer.train_images()
 
-#if __name__ == "__main__":
-    #os.chdir("..")
-    #Hop.set_project_path()
-    #run_approach(50)
+if __name__ == "__main__":
+    os.chdir("..")
+    Hop.set_project_path()
+    run_approach(50)

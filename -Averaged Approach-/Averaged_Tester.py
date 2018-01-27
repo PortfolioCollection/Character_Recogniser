@@ -1,38 +1,20 @@
+#--------Hopping-------#
 import os
-from PIL import ImageOps
-from PIL import Image
 import sys
-import numpy as np
 sys.path.append('../_Core Functions_')
+import Hop
+#----CUSTOM CLASSES-----#
 import Extractor
 import Manipulate_Image
+#---SUPPORT LIBRARIES---#
+import numpy as np
 
 def test(answer_array,index,filename):
     FOLDER_NAME = "-Averaged Approach-"
-
     test_image = Extractor.getImage(filename)
-    test_image = Manipulate_Image.crop_image(test_image)
-    test = Extractor.ImageToMatrix(test_image)
-    os.chdir('..')
-    os.chdir(os.getcwd()+"/"+FOLDER_NAME+"/")
-    os.chdir(os.getcwd()+"/trained_digits/")
-    
-    scores = []
-    for x in range(10):
-        trained_filename = str(x) + ".tif"    
-        
-        trained_image = Extractor.getImage(trained_filename)
-        trained_image = Manipulate_Image.crop_image(trained_image)
-        trained_image = ImageOps.fit(trained_image, (len(test[0]),len(test)), Image.ANTIALIAS)
-        trained = Extractor.ImageToMatrix(trained_image)
-
-        
-        scores.append(matching_score(test, trained))
-        
-    guess = scores.index(min(scores))
+    #test_image = Manipulate_Image.crop_image(test_image)
+    guess = test_one(test_image)
     # confidence = (1 - min(scores)/(255*28*28)) * 100
-    os.chdir('..')
-    os.chdir('..')
     os.chdir(os.getcwd()+"/test_images/")
     #print(scores)
     #print("==================================================================")
@@ -43,13 +25,12 @@ def test(answer_array,index,filename):
 
 
 def test_one(img):
-
     FOLDER_NAME = "-Averaged Approach-"
     test = Extractor.ImageToMatrix(img)
+    os.chdir('..')
     os.chdir(os.getcwd()+"/"+FOLDER_NAME+"/")
     os.chdir(os.getcwd()+"/trained_digits/")
     scores = []
-    
     for x in range(10):
         trained_filename = str(x) + ".tif"    
         

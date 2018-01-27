@@ -1,30 +1,28 @@
 #--------Hopping-------#
 import sys
 import os
-#sys.path.append(os.getcwd())
 sys.path.append(os.getcwd()+"/_Core Functions_")
-sys.path.append(os.getcwd()+"/-Averaged Approach-")
-sys.path.append(os.getcwd()+"/-KNN Approach-")
 import Hop
 #----CUSTOM CLASSES-----#
 Hop.set_project_path()
 Hop.go_to_core()
-import Painter
-import Averaged_Approach
-import KNN_Approach
+from Painter import*
 Hop.go_to_home()
 
 def average_approach(NUM_TESTS):
+    sys.path.append(os.getcwd()+"/-Averaged Approach-")
+    import Averaged_Approach
     os.chdir('-Averaged Approach-')
     Averaged_Approach.run_approach(NUM_TESTS)
-    #Painter(Averaged_Approach)
+    #Painter(Averaged_Approach.test_one())
 
 def knn_approach(NUM_TESTS):
-    print(os.getcwd())
-    os.chdir('-KNN Approach-')
-    print(os.getcwd())
-    KNN_Approach.run_approach(NUM_TESTS)
-    #Painter(KNN_Tester.test_one)
+    #sys.path.append(os.getcwd()+"/-KNN Approach-")
+    #import KNN_Approach
+    #os.chdir('-KNN Approach-')
+    #KNN_Approach.run_approach(NUM_TESTS)
+    Hop.go_to_core()
+    paint = Paint()
 
 
 if __name__ == "__main__":
