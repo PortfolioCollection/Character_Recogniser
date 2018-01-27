@@ -1,17 +1,25 @@
+#--------Hopping-------#
+import Hop
 import os
+import sys
+
+#----CUSTOM CLASSES-----#
+os.chdir("..")
+Hop.set_project_path()
+sys.path.append(os.getcwd()+"/-Averaged Approach-")
+sys.path.append(os.getcwd()+"/-KNN Approach-")
+import Extractor
+import Averaged_Tester
+import KNN_Tester
+Hop.go_to_core()
+
+#---SUPPORT LIBRARIES---#
 from tkinter import *
 from PIL import Image
 from PIL import ImageDraw
 import numpy as np
 import math
-import Extractor
-path = os.getcwd()
-os.chdir('..')
-sys.path.append(os.getcwd()+"/-Averaged Approach-")
-sys.path.append(os.getcwd()+"/-KNN Approach-")
-import Averaged_Tester
-import KNN_Tester
-os.chdir(path)
+
 
 array = np.full((280,280),255)
 img = Image.fromarray(array.astype(np.uint8))
@@ -110,9 +118,8 @@ def quadratic_fit(darkest_value):
     a = 255/(255*255-darkest_value*darkest_value)
     b = 255-255*255*a
     return [a,b]
-    
-    
-            
+                
 if __name__ == '__main__':
-    os.chdir('..')
     Paint()
+
+

@@ -1,114 +1,89 @@
+#--------Hopping-------#
 import os
 import sys
-import numpy as np
-import time
 sys.path.append('../_Core Functions_')
+import Hop
+#----CUSTOM CLASSES-----#
 import Extractor
 import KNN_Trainer
+#---SUPPORT LIBRARIES---#
+import numpy as np
+import time
 import re
 
-def test(answer_array,index,filename):
-    FOLDER_NAME = "-KNN Approach-"
-    
+def test_image(answer_array,index,filename):
     image = Extractor.getImage(filename)
-    grayscale = Extractor.ImageToMatrix(image)
-    r = np.zeros((grayscale.shape[0], grayscale.shape[1]), dtype=int)
-    lr = KNN_Trainer.read_image(grayscale)
-    lean = KNN_Trainer.record_left_right(lr)
-    segments = KNN_Trainer.record_segment(lr)
-    outside = KNN_Trainer.inside_outside(lr,grayscale)
-
-    os.chdir('..')
-    os.chdir(os.getcwd()+"/"+FOLDER_NAME+"/")
-    
-    neighbors = open("save.txt")
-
-    best_score = 100
-    optimal_number = -1
-    
-    for line in neighbors:
-        match = "line ([0-9]*): lean\(([0-9].[0-9]*)\) segment\(([0-9].[0-9]*)\) outside\(([0-9].[0-9]*)\) class\(([0-9])\)"
-        string = re.match(match, line)
-        train_line,train_lean,train_segments,train_outside,train_number = string.group(1),string.group(2),string.group(3),string.group(4),string.group(5)
-        #print(train_line)
-        score = abs(lean-float(train_lean))+abs(segments-float(train_segments))+abs(outside-float(train_outside))
-        if score < best_score:
-            best_score = score
-            optimal_number = train_number
-    #print("Score: "+str(score))
-    #print("Optimal Number: "+str(optimal_number))
-                
-        
-
-    os.chdir('..')
-    os.chdir(os.getcwd()+"/test_images/")
-    #print("Answer: "+str(answer_array[index]))
+    optimal_number = test_one(image)
+    Hop.go_to_TestImages()
     if answer_array[index] == int(optimal_number):
         return 1
     return 0
 
-def test_one(img):
-
+def test_one(image):
     FOLDER_NAME = "-KNN Approach-"
-    test = Extractor.ImageToMatrix(img)
-    os.chdir(os.getcwd()+"/"+FOLDER_NAME+"/")
-    grayscale = Extractor.ImageToMatrix(img)
+    test = Extractor.ImageToMatrix(image)
+
+    Hop.go_to_approach("/"+FOLDER_NAME)
+    
+    best_score = 100
+    optimal_number = -1
+    
+    grayscale = Extractor.ImageToMatrix(image)
     r = np.zeros((grayscale.shape[0], grayscale.shape[1]), dtype=int)
+    
     lr = KNN_Trainer.read_image(grayscale)
     lean = KNN_Trainer.record_left_right(lr)
     segments = KNN_Trainer.record_segment(lr)
     outside = KNN_Trainer.inside_outside(lr,grayscale)
-    neighbors = open("save.txt")
 
-    best_score = 100
-    optimal_number = -1
+    neighbors = open("save.txt")
     
     for line in neighbors:
         match = "line ([0-9]*): lean\(([0-9].[0-9]*)\) segment\(([0-9].[0-9]*)\) outside\(([0-9].[0-9]*)\) class\(([0-9])\)"
         string = re.match(match, line)
         train_line,train_lean,train_segments,train_outside,train_number = string.group(1),string.group(2),string.group(3),string.group(4),string.group(5)
-        #print(train_line)
         score = abs(lean-float(train_lean))+abs(segments-float(train_segments))
         if score < best_score:
             best_score = score
             optimal_number = train_number
-    
-    os.chdir('..')  
     return optimal_number
     
-def run_test(num_tests=10000):
+    
+def test_loop(num_tests=10000):
     STOP_AT = min(num_tests,10000)
     PERCENTILE = STOP_AT/100
     
     answer_array = []
-    os.chdir('..')
+    Hop.go_to_home()
     answers = open("mnist-test-labels.txt", "r")
     
     index = 0
     for line in answers:
         answer_array.append(int(line.strip()))
 
-    #print(answer_array)
     index = 0
     correct = 0
     percent = 0
-    os.chdir(os.getcwd()+"/test_images/")
+    Hop.go_to_TestImages()
     start_time = time.time()
     for filename in os.listdir(os.getcwd()):
-        correct += test(answer_array, index, filename)
+        correct += test_image(answer_array, index, filename)
         index+=1
         if index % PERCENTILE == 0:
             print(str(percent) + "%")
             percent += 1
         if index == STOP_AT:
             break
-        #break #comment this out later
     duration = (time.time()-start_time)
     print("Seconds:"+str(duration))
     print(str(correct/index*100)+"% correct")
 
+    
+
 if __name__ == "__main__":
-    run_test(500)
+    os.chdir("..")
+    Hop.set_project_path()
+    test_loop(50)
 
     
 

@@ -1,12 +1,18 @@
+#--------Hopping-------#
 import sys
 import os
-sys.path.append(os.getcwd())
+#sys.path.append(os.getcwd())
 sys.path.append(os.getcwd()+"/_Core Functions_")
 sys.path.append(os.getcwd()+"/-Averaged Approach-")
 sys.path.append(os.getcwd()+"/-KNN Approach-")
+import Hop
+#----CUSTOM CLASSES-----#
+Hop.set_project_path()
+Hop.go_to_core()
 import Painter
 import Averaged_Approach
 import KNN_Approach
+Hop.go_to_home()
 
 def average_approach(NUM_TESTS):
     os.chdir('-Averaged Approach-')
@@ -22,7 +28,7 @@ def knn_approach(NUM_TESTS):
 
 
 if __name__ == "__main__":
-    print(os.getcwd())
+    #print(os.getcwd())
     NUM_TESTS = 500
     approach = input("(1) Averaged Approach \n\
 (2) KNN Approach\n")
