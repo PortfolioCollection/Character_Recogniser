@@ -8,10 +8,10 @@ import Extractor
 import Manipulate_Image
 
 def test(answer_array,index,filename):
-    NN = 5
+    NN = 999
 
     test_image = Extractor.getImage(filename)
-    # test_image = Manipulate_Image.crop_image(test_image)
+    test_image = Manipulate_Image.crop_image(test_image)
     test = Extractor.ImageToMatrix(test_image)
     os.chdir('..')
     os.chdir(os.getcwd()+"/"+"train_images_sorted"+"/")
@@ -23,49 +23,55 @@ def test(answer_array,index,filename):
         
         for filename in os.listdir(os.getcwd()):
             trained_image = Extractor.getImage(filename)
-            #trained_image = crop_image(trained_image)
-            #trained_image = ImageOps.fit(trained_image, (len(test[0]),len(test)), Image.ANTIALIAS)
+            trained_image = Manipulate_Image.crop_image(trained_image)
+            trained_image = ImageOps.fit(trained_image, (len(test[0]),len(test)), Image.ANTIALIAS)
             trained = Extractor.ImageToMatrix(trained_image)
             scores = add_score(scores, x, matching_score(test, trained), NN)
             #print("done a file")
         os.chdir('..')
 
 
-    print(scores)
+    # print(scores)
     os.chdir('..')
     os.chdir(os.getcwd()+"/test_images/")
-    if answer_array[index] == predict(scores, NN):
+    if answer_array[index] == predict(scores):
         return 1
     return 0
 
-def predict(scores, NN):
-    ranked = []
-    for x in range(NN):
-        best = (69, 255*28*28)
-        for d in scores:
-            for i in range(len(scores[d])):
-                if scores[d][i] < best[1]:
-                    best = (d, i)
-        ranked.append(best[0])
-        del scores[best[0]][best[1]]
-    return max(set(ranked), key=ranked.count)
+def predict(scores):
+    ranked = {0:[], 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[], 8:[], 9:[]}
+    for d in scores:
+        ranked[d].sort()
+        ranked[d].append(len(scores[d]))
+        if len(scores[d]) > 0:
+            ranked[d].append(scores[d][0])
+    best = None
+    for d in ranked:
+        if best is None and len(ranked[d]) > 0:
+            best = [d, 28*28*255]
+        if len(ranked[d]) == len(ranked[best[0]]):
+            if ranked[d][1] < ranked[best[0]][1]:
+                best = [d, ranked[d][1]]
+        if ranked[d][0] > ranked[best[0]][0]:
+            best = [d, ranked[d][1]]
+    return best[0]
 
     
 def add_score(scores, digit, element, NN):
     # print(scores)
     # print((digit, element))
     total = 0
-    worst = [69,0]
+    worst = None
     for d in scores:
         for i in range(len(scores[d])):
             total += 1
-            if len(scores[d]) >  worst[1] and scores[d][i] >= scores[d][worst[1]]:
+            if worst is None or scores[d][i] >= scores[worst[0]][worst[1]]:
                 worst = [d, i]
-
+    # print(worst)
+    if total < NN:
+        scores[digit].append(element)
     if total >= NN and element <= scores[worst[0]][worst[1]]:
         del scores[worst[0]][worst[1]]
-        scores[digit].append(element)
-    if total < NN:
         scores[digit].append(element)
         
     return scores
