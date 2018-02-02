@@ -6,10 +6,14 @@ import numpy as np
 sys.path.append('../_Core Functions_')
 import Extractor
 import Manipulate_Image
+import time
 
 def test(answer_array,index,filename):
-    NN = 999
+    NN = 10
+    count = 0
 
+    STOP = 100
+    
     test_image = Extractor.getImage(filename)
     test_image = Manipulate_Image.crop_image(test_image)
     test = Extractor.ImageToMatrix(test_image)
@@ -20,25 +24,32 @@ def test(answer_array,index,filename):
     scores = {0:[], 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[], 8:[], 9:[]}
     for x in range(10):
         os.chdir(os.getcwd()+"/" + str(x) + "/")
-        
         for filename in os.listdir(os.getcwd()):
+            if count == STOP: break
             trained_image = Extractor.getImage(filename)
             trained_image = Manipulate_Image.crop_image(trained_image)
             trained_image = ImageOps.fit(trained_image, (len(test[0]),len(test)), Image.ANTIALIAS)
             trained = Extractor.ImageToMatrix(trained_image)
             scores = add_score(scores, x, matching_score(test, trained), NN)
             #print("done a file")
+            count+=1
+        count = 0
         os.chdir('..')
 
 
     # print(scores)
     os.chdir('..')
     os.chdir(os.getcwd()+"/test_images/")
-    if answer_array[index] == predict(scores):
+
+
+    guess = predict(scores)
+    print("Actual: "+str(answer_array[index])+" Best: "+str(guess))
+    if answer_array[index] == guess:
         return 1
     return 0
 
 def predict(scores):
+    #print(scores)
     ranked = {0:[], 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[], 8:[], 9:[]}
     for d in scores:
         ranked[d].sort()
@@ -50,6 +61,7 @@ def predict(scores):
         if best is None and len(ranked[d]) > 0:
             best = [d, 28*28*255]
         if len(ranked[d]) == len(ranked[best[0]]):
+            #print("Ranked: "+str(ranked)+" d: "+str(d)+" best[0]: "+str(best[0]))
             if ranked[d][1] < ranked[best[0]][1]:
                 best = [d, ranked[d][1]]
         if ranked[d][0] > ranked[best[0]][0]:
@@ -138,8 +150,9 @@ def run_test(num_tests=10000):
     print(str(correct/index*100)+"% correct")
 
 if __name__ == "__main__":
-    run_test(2)
-
+    start = time.time()
+    run_test(10)
+    print("It took " + str(time.time()-start) + "seconds")
     
 
     
