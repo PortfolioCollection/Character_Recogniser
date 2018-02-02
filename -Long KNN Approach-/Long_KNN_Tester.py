@@ -9,10 +9,10 @@ import Manipulate_Image
 import time
 
 def test(answer_array,index,filename):
-    NN = 10
+    NN = 3
     count = 0
 
-    STOP = 100
+    STOP = 1
     
     test_image = Extractor.getImage(filename)
     test_image = Manipulate_Image.crop_image(test_image)
@@ -49,24 +49,26 @@ def test(answer_array,index,filename):
     return 0
 
 def predict(scores):
-    #print(scores)
+    # print(scores)
     ranked = {0:[], 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[], 8:[], 9:[]}
     for d in scores:
-        ranked[d].sort()
+        scores[d].sort()
         ranked[d].append(len(scores[d]))
         if len(scores[d]) > 0:
             ranked[d].append(scores[d][0])
     best = None
     for d in ranked:
-        if best is None and len(ranked[d]) > 0:
-            best = [d, 28*28*255]
-        if len(ranked[d]) == len(ranked[best[0]]):
-            #print("Ranked: "+str(ranked)+" d: "+str(d)+" best[0]: "+str(best[0]))
-            if ranked[d][1] < ranked[best[0]][1]:
-                best = [d, ranked[d][1]]
-        if ranked[d][0] > ranked[best[0]][0]:
+        if best is None and len(ranked[d]) > 1:
             best = [d, ranked[d][1]]
+        if best is not None and len(ranked[d]) > 1:
+            if ranked[d][0] > ranked[best[0]][0]:
+                best = [d, ranked[d][1]]
+            if ranked[d][0] == ranked[best[0]][0]:
+                #print("Ranked: "+str(ranked)+" d: "+str(d)+" best[0]: "+str(best[0]))
+                if ranked[d][1] < ranked[best[0]][1]:
+                    best = [d, ranked[d][1]]
     return best[0]
+
 
     
 def add_score(scores, digit, element, NN):
@@ -151,7 +153,7 @@ def run_test(num_tests=10000):
 
 if __name__ == "__main__":
     start = time.time()
-    run_test(10)
+    run_test(100)
     print("It took " + str(time.time()-start) + "seconds")
     
 
