@@ -12,7 +12,7 @@ def test(answer_array,index,filename):
     NN = 3
     count = 0
 
-    STOP = 1
+    STOP = 100
     
     test_image = Extractor.getImage(filename)
     test_image = Manipulate_Image.crop_image(test_image)
@@ -43,7 +43,7 @@ def test(answer_array,index,filename):
 
 
     guess = predict(scores)
-    print("Actual: "+str(answer_array[index])+" Best: "+str(guess))
+    #print("Actual: "+str(answer_array[index])+" Best: "+str(guess))
     if answer_array[index] == guess:
         return 1
     return 0
@@ -117,7 +117,7 @@ def matching_score(test, digit):
     score = 0
     for row in range(len(test)):
         for col in range(len(test[row])):
-            if not test[row][col] == 255 and not digit[row][col] == 255:
+            if not test[row][col] == 255 or not digit[row][col] == 255:
                 invert_test = 255 - test[row][col]
                 invert_memory = 255 - digit[row][col]
                 score += abs(invert_memory - invert_test)
