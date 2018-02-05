@@ -83,7 +83,7 @@ def propagate(net,inpt,answer):
         for i in range(len(start_nodes)):
             for j in range(len(start_nodes[i].outputs)):
                 start_nodes[i].outputs[j].value += start_nodes[i].value*start_nodes[i].out_weights[j]
-                print((start_nodes[i].outputs[j].index,start_nodes[i].outputs[j].value))
+                #print((start_nodes[i].outputs[j].index,start_nodes[i].outputs[j].value))
         start_nodes = start_nodes[0].outputs
     return([a,b,c],[h1,h2,h3],[y],answer - y.value)
 

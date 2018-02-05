@@ -1,5 +1,6 @@
 #CREDIT TO https://gist.github.com/craffel/2d727968c3aaebd10359
 
+import math
 import matplotlib.pyplot as plt
 from mpldatacursor import datacursor
 
@@ -25,7 +26,8 @@ def draw_neural_net(left, right, bottom, top, layer_sizes, layer_text=None, weig
             # Node annotations
             if layer_text:
                 text = layer_text.pop(0)
-                plt.annotate(text, xy=(x, y), zorder=5, ha='center', va='center',size=25)
+                text_size = 500*v_spacing/4./(math.log(len(str(text)),2)+1)
+                plt.annotate(text, xy=(x, y), zorder=5, ha='center', va='center',size=text_size)
 
     # Edges
     count = 0
@@ -53,6 +55,6 @@ def draw_neural_net(left, right, bottom, top, layer_sizes, layer_text=None, weig
 
 if __name__ == "__main__":
     # Need empty strings for unlabeled nodes at start, but not at end
-    node_text = ['I','s','I','t']
+    node_text = ['I','s','I','t','hanifheihiehfihefowefhowehfowhefofdjaojef[aejgf[aejfajefoja[fej[aeofjpi']
     weights = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25]
     draw_neural_net(0.1, 1, 0, 1, [2,2,4,3,1], node_text, weights)
