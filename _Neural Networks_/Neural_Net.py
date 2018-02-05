@@ -52,6 +52,6 @@ class Wire():
         self.weight = weight
 
     def __str__(self):
-        return "Back Node: "+str(back_node.index)+" Front Node: "+str(front_node.index)+" Weight: "+str(weight)
+        return "Back Node: "+str(self.back_node.index)+" Front Node: "+str(self.front_node.index)+" Weight: "+str(self.weight)
         
     

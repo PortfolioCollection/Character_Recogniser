@@ -24,28 +24,31 @@ class Builder:
     def connect_layers(self,layer_sizes,prev, nxt):
         for i in range(layer_sizes[prev]):
             for j in range(layer_sizes[nxt]):
-                self.net.connect(self.net.layers[prev][i], self.net.layers[nxt][j],random.randint(0,10))
+                self.net.connect(self.net.layers[prev][i], self.net.layers[nxt][j],random.randint(0,10)/10)
                 self.count+=1
-
-
-    def show_net(self):
-        nodes = []
-        for layer in self.net.layers:
-            for node in layer:
-                nodes.append(node.value)
-        weights = []
-        for i in range(len(self.net.layers)-1):
-            for node in self.net.layers[i]:
-                for connection in node.connections[0]:
-                    weights.append(connection.weight)
-        Visualizer.draw_neural_net(0.1, 1, 0, 1, self.layer_sizes, nodes, weights)
-
+                
     def get_net(self):
         return self.net
 
+
+def show_net(net):
+    layer_sizes = []
+    nodes = []
+    for layer in net.layers:
+        layer_sizes.append(len(layer))
+        for node in layer:
+            nodes.append(node.value)
+    weights = []
+    for i in range(len(net.layers)-1):
+        for node in net.layers[i]:
+            for connection in node.connections[0]:
+                weights.append(connection.weight)
+    Visualizer.draw_neural_net(0.1, 1, 0, 1, layer_sizes, nodes, weights)
+
+
 if __name__ == "__main__":
-    builder = Builder([3,5,6],list(range(14)))
-    builder.show_net()
+    builder = Builder([3,2,3],list(range(14)))
+    show_net(builder.net)
 
 
 
