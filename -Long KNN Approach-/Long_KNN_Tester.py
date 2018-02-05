@@ -43,7 +43,7 @@ def test(answer_array,index,filename):
 
 
     guess = predict(scores)
-    print("Actual: "+str(answer_array[index])+" Best: "+str(guess))
+    #print("Actual: "+str(answer_array[index])+" Best: "+str(guess))
     if answer_array[index] == guess:
         return 1
     return 0
@@ -153,7 +153,7 @@ def run_test(num_tests=10000):
 
 if __name__ == "__main__":
     start = time.time()
-    run_test(10)
+    run_test(100)
     print("It took " + str(time.time()-start) + "seconds")
     
 
