@@ -37,7 +37,7 @@ class Node():
     def __init__(self, index, value = 0):
         self.index = index
         self.value = value
-        self.connections = [[],[]]
+        self.connections = [[],[]] #[[inputs],[outputs]]
 
     def __str__(self):
         return "Value: "+str(self.value)+"   Index :"+str(self.index)+"   Connections: "+str(self.connections)

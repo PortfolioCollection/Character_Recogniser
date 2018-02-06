@@ -12,11 +12,12 @@ def propagate(net):
             for connection in node.connections[1]:      #output connections
                 connection.front_node.value += connection.back_node.value * connection.weight
                 connection.front_node.value = round(connection.front_node.value, 2)
+                #print((connection.back_node.index,connection.front_node.index,connection.weight,connection.front_node.value))
         
     return net
             
 
 if __name__ == "__main__":
-    net = generate_net([3,2,3],list(range(14)))
+    net = generate_net([3,2,3],list(range(12)))
     net = propagate(net)
     show_net(net)
