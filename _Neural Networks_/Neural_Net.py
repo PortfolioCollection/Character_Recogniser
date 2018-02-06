@@ -12,28 +12,28 @@ class Neaural_Net:
         self.layers.append([])
 
     def add_input_node(self,value):
-        self.layers[0].append(node(self.count,value))
+        self.layers[0].append(Node(self.count,value))
         self.count+=1
 
     def add_hidden_node(self,layer):
         global count
-        self.layers[layer].append(node(self.count))
+        self.layers[layer].append(Node(self.count))
         self.count+=1
 
     def add_output_node(self):
         global count
-        self.layers[len(self.layers)-1].append(node(self.count))
+        self.layers[len(self.layers)-1].append(Node(self.count))
         self.count+=1
 
     def connect(self,node1,node2,weight):
         connection = Wire(node1,node2,weight)
-        node1.connections[0].append(connection)
-        node2.connections[1].append(connection)
+        node1.connections[1].append(connection)
+        node2.connections[0].append(connection)
 
     def __str__(self):
-        return self.layers
+        return str(self.layers)
 
-class node():
+class Node():
     def __init__(self, index, value = 0):
         self.index = index
         self.value = value

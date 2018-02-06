@@ -26,7 +26,7 @@ def draw_neural_net(left, right, bottom, top, layer_sizes, layer_text=None, weig
             # Node annotations
             if layer_text:
                 text = layer_text.pop(0)
-                text_size = 500*v_spacing/4./(math.log(len(str(text)),2)+1)
+                text_size = 700*v_spacing/4./(math.log(len(str(text)),2)+1)
                 plt.annotate(text, xy=(x, y), zorder=5, ha='center', va='center',size=text_size)
 
     # Edges

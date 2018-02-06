@@ -7,14 +7,12 @@ def generate_net(structure, inputs):
     return net
 
 def propagate(net):
-    for i in range(len(net.layers)-1):
-        for j in range(len(net.layers[i])):
-            for n in range(len(net.layers[i+1])):
-                node_value = net.layers[i][j].value
-                connection_weight = net.layers[i][j].connections[0][n].weight
-                print(node_value)
-                print(connection_weight)
-                net.layers[i+1][n].value += node_value*connection_weight
+    for layer in net.layers:
+        for node in layer:
+            for connection in node.connections[1]:      #output connections
+                connection.front_node.value += connection.back_node.value * connection.weight
+                connection.front_node.value = round(connection.front_node.value, 2)
+        
     return net
             
 
