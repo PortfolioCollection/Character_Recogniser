@@ -12,17 +12,17 @@ class Neaural_Net:
         self.layers.append([])
 
     def add_input_node(self,value):
-        self.layers[0].append(Node(self.count,value))
+        self.layers[0].append(Sigmoid_Node(self.count,random.uniform(-1, 1),value))
         self.count+=1
 
     def add_hidden_node(self,layer):
         global count
-        self.layers[layer].append(Node(self.count))
+        self.layers[layer].append(Sigmoid_Node(self.count,random.uniform(-1, 1)))
         self.count+=1
 
     def add_output_node(self):
         global count
-        self.layers[len(self.layers)-1].append(Node(self.count))
+        self.layers[len(self.layers)-1].append(Sigmoid_Node(self.count,random.uniform(-1, 1)))
         self.count+=1
 
     def connect(self,node1,node2,weight):
@@ -39,8 +39,29 @@ class Node():
         self.value = value
         self.connections = [[],[]] #[[inputs],[outputs]]
 
+
+    def compute_value(self,wires):
+        for wire in wires:
+            self.value += wire.back_node.value * wire.weight
+        self.value = round(self.value, 2)
+
     def __str__(self):
         return "Value: "+str(self.value)+"   Index :"+str(self.index)+"   Connections: "+str(self.connections)
+
+class Sigmoid_Node(Node):
+    def __init__(self,index,bias=0,value=0):
+        Node.__init__(self,index,value)
+        self.bias = bias
+
+    def compute_value(self,wires):
+        sum_nodes = 0
+        for wire in wires:
+            sum_nodes += wire.back_node.value * wire.weight
+        self.value = 1/(1+math.exp(-sum_nodes-self.bias))
+        self.value = round(self.value,2)
+
+    def __str__(self):
+        return "Bias: " + str(self.bias) + " " + Node.__str__(self)
 
 class Wire():
     def __init__(self, back_node, front_node, weight = 0):

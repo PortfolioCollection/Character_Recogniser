@@ -10,7 +10,10 @@ class Builder:
         length = len(layer_sizes)
         self.net.add_layer()
         for i in range(layer_sizes[0]):
-            self.net.add_input_node(inputs[i])
+            if i < len(inputs):
+                self.net.add_input_node(inputs[i])
+            else:
+                self.net.add_input_node(0)
         for h in range(1,length-1):
             self.net.add_layer()
             for n in range(layer_sizes[h]):
@@ -24,7 +27,7 @@ class Builder:
     def connect_layers(self,layer_sizes,prev, nxt):
         for i in range(layer_sizes[prev]):
             for j in range(layer_sizes[nxt]):
-                self.net.connect(self.net.layers[prev][i], self.net.layers[nxt][j],random.randint(0,10)/10)
+                self.net.connect(self.net.layers[prev][i], self.net.layers[nxt][j],random.uniform(-1, 1))
                 self.count+=1
                 
     def get_net(self):
