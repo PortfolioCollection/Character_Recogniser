@@ -28,6 +28,8 @@ def draw_neural_net(left, right, bottom, top, layer_sizes, layer_text=None, weig
                 text = layer_text.pop(0)
                 text_size = 700*v_spacing/(4.*(math.log(len(str(text))+1,7)))
                 plt.annotate(text, xy=(x, y), zorder=5, ha='center', va='center',size=text_size)
+                #plt.annotate("Val:"+str(text), xy=(x, y), zorder=5, ha='center', va='center',size=text_size)
+                #plt.annotate("Err:"+str(text), xy=(x, y-0.1), zorder=5, ha='center', va='center',size=text_size)
 
     # Edges
     count = 0

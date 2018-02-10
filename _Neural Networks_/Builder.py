@@ -1,5 +1,6 @@
 from Neural_Net import*
 import random
+import numpy as np
 
 class Builder:
     def __init__(self, layer_sizes, inputs):
@@ -34,7 +35,7 @@ class Builder:
         return self.net
 
 def collect_connections_weights(net):
-    connections = []
+    connections =[]
     for layer in net.layers:
         seg = []
         for node in layer:
@@ -44,10 +45,12 @@ def collect_connections_weights(net):
                 #print(connection)
         if seg:
             connections.append(seg)
-    return connections
+    return np.array(connections)
 
 def mass_set_connections(net,array):
     count = 0
+    array = array.flatten()
+    print(array)
     for layer in net.layers:
         for node in layer:
             for connection in node.connections[1]:
@@ -72,9 +75,11 @@ def show_net(net):
 
 
 if __name__ == "__main__":
-    builder = Builder([3,2,3],list(range(12)))
+    builder = Builder(np.array([3,2,3]),list(range(12)))
     net = builder.net
-    print(collect_connections_weights(net))
-    net = mass_set_connections(net,[1,21,54,32,42,12,43,62,75,85,23,95])
+    connections = collect_connections_weights(net)
+    print(connections)
+    print(connections.shape)
+    net = mass_set_connections(net,np.array([[1,21,54,32,42,12],[43,62,75,85,23,95]]))
     show_net(net)
 

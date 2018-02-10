@@ -12,7 +12,7 @@ class Neaural_Net:
         self.layers.append([])
 
     def add_input_node(self,value):
-        self.layers[0].append(Sigmoid_Node(self.count,random.uniform(-1, 1),value))
+        self.layers[0].append(Sigmoid_Node(self.count,None,value))
         self.count+=1
 
     def add_hidden_node(self,layer):
@@ -37,6 +37,7 @@ class Node():
     def __init__(self, index, value = 0):
         self.index = index
         self.value = value
+        self.error = 0
         self.connections = [[],[]] #[[inputs],[outputs]]
 
 
@@ -52,13 +53,18 @@ class Sigmoid_Node(Node):
     def __init__(self,index,bias=0,value=0):
         Node.__init__(self,index,value)
         self.bias = bias
+        self.z = None
 
     def compute_value(self,wires):
-        sum_nodes = 0
+        self.z = 0
         for wire in wires:
-            sum_nodes += wire.back_node.value * wire.weight
-        self.value = 1/(1+math.exp(-sum_nodes-self.bias))
-        self.value = round(self.value,2)
+            self.z += wire.back_node.value * wire.weight
+        self.z += self.bias
+        #print(self.z)
+        return self.sigmoid(self.z)
+
+    def sigmoid(self,z):
+        return 1/(1+math.exp(-self.z))
 
     def __str__(self):
         return "Bias: " + str(self.bias) + " " + Node.__str__(self)
