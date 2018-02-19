@@ -60,27 +60,23 @@ def derivative_cost(prediction, answer):
     
 if __name__ == "__main__":
     net = generate_net([3,10,1],[0,0,0])
-    for i in range(100000):
-        x = random.randint(-1,1)
-        y = random.randint(-1,1)
-        z = random.randint(-1,1)
+    for k in range(10):
+        for i in range(100000):
+            x = random.randint(-1,1)
+            y = random.randint(-1,1)
+            z = random.randint(-1,1)
+            net.set_inputs([x,y,z])
+            net = propagate(net)
+            output_error(net,[x*y*z])
+            hidden_error(net)
+            improve_bias()
+            improve_weights()
+        x = 0.2
+        y = 0.25
+        z = 0.24
         net.set_inputs([x,y,z])
         net = propagate(net)
-        #print(net.layers[-1][0].value)
-        output_error(net,[x*y*z])
-        #print(net.layers[-1][0].error)
-        hidden_error(net)
-        #print(net.layers[2][0].error)
-        improve_bias()
-        improve_weights()
-        #print((net.layers[-1][0].value))
-    #show_net(net)
-    x = 0.2
-    y = 0.25
-    z = 0.24
-    net.set_inputs([x,y,z])
-    net = propagate(net)
-    print((net.layers[-1][0].value))
+        print((net.layers[-1][0].value))
     show_net(net)
     
     

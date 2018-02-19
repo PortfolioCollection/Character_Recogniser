@@ -16,4 +16,5 @@ def train_approach():
 if __name__ == "__main__":
     os.chdir("..")
     Hop.set_project_path()
+    Hop.go_to_approach("/-Averaged Approach-")
     Averaged_Tester.run_test(500)
