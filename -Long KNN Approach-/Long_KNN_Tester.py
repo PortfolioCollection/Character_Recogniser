@@ -124,6 +124,9 @@ def matching_score(test, digit):
     return score
 
 def run_test(num_tests=10000):
+    file = open('status.txt', 'w')
+    file.write(str(time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()))+"\n")
+    file.flush()
     STOP_AT = min(num_tests,10000)
     PERCENTILE = STOP_AT/100
     
@@ -138,7 +141,7 @@ def run_test(num_tests=10000):
     #print(answer_array)
     index = 0
     correct = 0
-    percent = 0
+    percent = 1
     os.chdir(os.getcwd()+"/test_images/")
     for filename in os.listdir(os.getcwd()):
         correct += test(answer_array, index, filename)
@@ -146,9 +149,13 @@ def run_test(num_tests=10000):
         if index % PERCENTILE == 0:
             print(str(percent) + "%")
             percent += 1
+        file.write(str(index)+": "+str(round(correct/index*100,2))+"%\n")
+        file.flush()
         if index == STOP_AT:
             break
-
+    file.write("done")
+    file.flush()
+    file.close()
     print(str(correct/index*100)+"% correct")
 
 if __name__ == "__main__":

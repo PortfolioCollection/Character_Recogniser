@@ -10,6 +10,7 @@ import KNN_Trainer
 import numpy as np
 import time
 import re
+import time
 
 def test_image(answer_array,index,filename):
     image = Extractor.getImage(filename)
@@ -50,6 +51,9 @@ def test_one(image):
     
     
 def test_loop(num_tests=10000):
+    file = open('status.txt', 'w')
+    file.write(str(time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime()))+"\n")
+    file.flush()
     STOP_AT = min(num_tests,10000)
     PERCENTILE = STOP_AT/100
     
@@ -63,7 +67,7 @@ def test_loop(num_tests=10000):
 
     index = 0
     correct = 0
-    percent = 0
+    percent = 1
     Hop.go_to_TestImages()
     start_time = time.time()
     for filename in os.listdir(os.getcwd()):
@@ -72,8 +76,13 @@ def test_loop(num_tests=10000):
         if index % PERCENTILE == 0:
             print(str(percent) + "%")
             percent += 1
+        file.write(str(index)+": "+str(round(correct/index*100,2))+"%\n")
+        file.flush()
         if index == STOP_AT:
             break
+    file.write("done")
+    file.flush()
+    file.close()
     duration = (time.time()-start_time)
     print("Seconds:"+str(duration))
     print(str(correct/index*100)+"% correct")
@@ -83,6 +92,7 @@ def test_loop(num_tests=10000):
 if __name__ == "__main__":
     os.chdir("..")
     Hop.set_project_path()
+    Hop.go_to_approach("/-KNN Approach-")
     test_loop(50)
 
     
