@@ -3,7 +3,9 @@ import random
 import Visualizer
 
 class Neaural_Net:
-    
+    """
+    A neural net representation with input, hidden and output layers
+    """
     def __init__(self):
         self.layers = []
         self.count = 0
@@ -16,6 +18,9 @@ class Neaural_Net:
         self.count+=1
 
     def add_hidden_node(self,layer):
+        """
+        Adds a hidden node to the specified layer
+        """
         global count
         self.layers[layer].append(Sigmoid_Node(self.count,random.uniform(-1, 1)))
         self.count+=1
@@ -26,11 +31,17 @@ class Neaural_Net:
         self.count+=1
 
     def connect(self,node1,node2,weight):
+        """
+        Makes a wire between two given nodes with a given weight
+        """
         connection = Wire(node1,node2,weight)
         node1.connections[1].append(connection)
         node2.connections[0].append(connection)
 
     def set_inputs(self,inputs):
+        """
+        Sets the inputs values for the input layes
+        """
         count = 0
         for node in self.layers[0]:
             node.value = inputs[count]
@@ -40,6 +51,9 @@ class Neaural_Net:
         return str(self.layers)
 
 class Node():
+    """
+    A simple node with a value and an error
+    """
     def __init__(self, index, value = 0):
         self.index = index
         self.value = value
@@ -51,19 +65,13 @@ class Node():
         for wire in wires:
             self.value += wire.back_node.value * wire.weight
 
-    def compute_error(self, wires):
-        return self.derivative_sigmoid(self.value)
-
-    def sigmoid(self,value):
-        return 1/(1+math.exp(-value))
-
-    def derivative_sigmoid(self,value):
-        return self.sigmoid(value)*(1-self.sigmoid(value))
-
     def __str__(self):
         return "Value: "+str(self.value)+"   Index :"+str(self.index)+"   Connections: "+str(self.connections)
 
 class Sigmoid_Node(Node):
+    """
+    A sigmoid node with an aditional bias
+    """
     def __init__(self,index,bias=0,value=0):
         Node.__init__(self,index,value)
         self.bias = bias
@@ -76,7 +84,7 @@ class Sigmoid_Node(Node):
         self.z += self.bias
         self.value = self.sigmoid(self.z)
 
-    def compute_error(self, wires):
+    def compute_error(self):
         return self.derivative_sigmoid(self.z)
 
     def sigmoid(self,z):
@@ -89,6 +97,9 @@ class Sigmoid_Node(Node):
         return "Bias: " + str(self.bias) + " " + Node.__str__(self)
 
 class Wire():
+    """
+    A connection between two nodes
+    """
     def __init__(self, back_node, front_node, weight = 0):
         self.weight = weight
         self.back_node = back_node
