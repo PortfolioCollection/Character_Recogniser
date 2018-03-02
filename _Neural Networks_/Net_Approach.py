@@ -31,6 +31,7 @@ def output_error(net,answers):
         """
         node.error = derivative_cost(node.value, answers[count])
         count+=1
+    return net
 
 def hidden_error(net):
     """
@@ -46,18 +47,20 @@ def hidden_error(net):
             for connection in node.connections[1]:
                 error_weight+= connection.weight * connection.front_node.error
             node.error = error_weight * node.compute_error()
+    return net
 
-def improve_bias():
+def improve_bias(net):
     """
     Chenges the bias of a node based on the errors of the next layer
     """
     LEARNING_RATE = 0.05
     for layer in net.layers[1:-1]:
         for node in layer:
-            for connection in node.connections[1]:
+            for connection in node.connections[1]: ## What is this
                 node.bias -= LEARNING_RATE*node.error
+    return net
 
-def improve_weights():
+def improve_weights(net):
     """
     Chenges the weights of a node based on the errors of the next layer
     """
@@ -66,7 +69,8 @@ def improve_weights():
         for node in layer:
             for connection in node.connections[1]:
                 connection.weight = connection.weight - LEARNING_RATE*(connection.back_node.value*connection.front_node.error)
-    
+
+    return net
 
 def cost_funcion(prediction, answer):
     return (1/2)*(prediction - answer)**2
@@ -77,24 +81,20 @@ def derivative_cost(prediction, answer):
     
     
 if __name__ == "__main__":
-    net = generate_net([3,10,1],[0,0,0])
-    for k in range(10):
-        for i in range(100000):
+    net = generate_net([4,8,10],[69,69,69,69])
+    for k in range(1):
+        for i in range(5000):
+            w = random.randint(-1,1)
             x = random.randint(-1,1)
             y = random.randint(-1,1)
             z = random.randint(-1,1)
-            net.set_inputs([x,y,z])
+            net.set_inputs([2,2,2,2])
             net = propagate(net)
-            output_error(net,[x+y+z])
+            output_error(net,[1,0,0,0,0,0,0,0,0,0])
             hidden_error(net)
-            improve_bias()
-            improve_weights()
-        x = 0.2
-        y = 0.15
-        z = 0.34
-        net.set_inputs([x,y,z])
-        net = propagate(net)
-        print((net.layers[-1][0].value))
+            improve_bias(net)
+            improve_weights(net)
+        print((net.layers[-1][1].value))
     show_net(net)
     
     
