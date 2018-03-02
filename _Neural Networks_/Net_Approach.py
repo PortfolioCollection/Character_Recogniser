@@ -30,6 +30,7 @@ def output_error(net,answers):
         δerror =∂C/∂a * σ′(z).
         """
         node.error = derivative_cost(node.value, answers[count])
+        
         count+=1
     return net
 

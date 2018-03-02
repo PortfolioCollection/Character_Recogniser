@@ -7,6 +7,7 @@ class Neaural_Net:
     A neural net representation with input, hidden and output layers
     """
     def __init__(self):
+        self.layer_sizes = []
         self.layers = []
         self.count = 0
         
