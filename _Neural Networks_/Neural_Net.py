@@ -28,7 +28,7 @@ class Neaural_Net:
 
     def add_output_node(self):
         global count
-        self.layers[len(self.layers)-1].append(Node(self.count))
+        self.layers[len(self.layers)-1].append(Sigmoid_Node(self.count))
         self.count+=1
 
     def connect(self,node1,node2,weight):
