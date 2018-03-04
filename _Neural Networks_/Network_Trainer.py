@@ -1,6 +1,8 @@
 # --------Hopping-------#
 import os
 import sys
+import pickle
+from pathlib import Path
 from Net_Approach import *
 
 sys.path.append('../_Core Functions_')
@@ -11,18 +13,22 @@ from PIL import Image
 import numpy as np
 
 network = None
+batches = 0
 
 def train_images(size,num):
     count = 0
-    batches = 1
     error_layer = [0,0,0,0,0,0,0,0,0,0]
     os.chdir('..')
     root = os.getcwd()
     answer_array = read_answers()
-    
-    network = generate_net([28*28,20,20, 10], np.zeros((28*28), dtype=int))
+
+    global batches
+    iteration = 0
+
+    global network
+    if network is None:
+        network = generate_net([28*28,20,20, 10], np.zeros((28*28), dtype=int))
     os.chdir(root +"/train_images")
-    
     for filename in os.listdir(os.getcwd()):
         #Read values from test image
         image = Extractor.getImage(filename)
@@ -34,7 +40,7 @@ def train_images(size,num):
         correct_array[int(answer_array[count])] = 1
         #Propagate input forward
         network = run_net(network,data)
-        #Add up all the errors for each output node for size number of iterations 
+        #Add up all the errors for each output node for size number of iterations
         for i in range(len(error_layer)):
             error_layer[i] += (network.layers[-1][i].value-correct_array[i])*network.layers[-1][i].compute_error()
 
@@ -44,23 +50,24 @@ def train_images(size,num):
             #Sets the averaged error per output node
             for i in range(len(network.layers[-1])):
                 total_error+=error_layer[i]
-                #Set the output error to the average error of that node for entire batch 
+                #Set the output error to the average error of that node for entire batch
                 network.layers[-1][i].error = error_layer[i]/size
-            print("Total Error: "+str(total_error)+" batch:"+str(batches))   
+            print("Total Error: "+str(total_error)+" batch:"+str(batches + 1))
 
             #Improve the net based on the output error
             network = improve_net(network)
 
             #Reinitialize values for next batch
             count = 0
-            batches+=1
+            batches += 1
+            iteration += 1
             error_layer = [0,0,0,0,0,0,0,0,0,0]
-            
-            if batches >= num:
+
+            if iteration >= num:
                 return network
         else:
             count+=1
-        
+
     return network
 
 def read_answers():
@@ -109,14 +116,21 @@ def run_test(network,scaled_grayscale):
     print(index)
 
 if __name__ == "__main__":
+    if Path("network.p").is_file():
+        (network,batches) = pickle.load(open("network.p", "rb"))
     network = train_images(100,5)
     print("done training")
+
     os.chdir('..')
-    os.chdir(os.getcwd()+'/test_images')
-    for filename in os.listdir(os.getcwd()):
-        image = Extractor.getImage(filename)
-        matrix = Extractor.ImageToMatrix(image)
-        data = np.asarray(matrix).flatten()
-        data = scale_data(data)
-        run_test(network,data)
+    os.chdir(os.getcwd() + "/_Neural Networks_")
+    pickle.dump((network,batches), open("network.p", "wb"))
+
+    # os.chdir('..')
+    # os.chdir(os.getcwd()+'/test_images')
+    # for filename in os.listdir(os.getcwd()):
+    #     image = Extractor.getImage(filename)
+    #     matrix = Extractor.ImageToMatrix(image)
+    #     data = np.asarray(matrix).flatten()
+    #     data = scale_data(data)
+    #     run_test(network,data)
     
