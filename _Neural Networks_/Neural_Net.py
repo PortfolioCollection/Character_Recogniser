@@ -8,26 +8,38 @@ class Neaural_Net:
     A neural net representation with input, hidden and output layers
     """
     def __init__(self, num_layers):
-        self.layer_sizes = []
-        self.node_layers = []
-        self.bias_layers = []
-        self.connection_layers = []
-        self.z_layers = []
-        self.error_layers = []
+        self.layer_sizes = []           #format of the net
+        self.node_layers = []           #array of values in the net
+        self.bias_layers = []           #array of bias in the net
+        self.connection_layers = []     #array of weights in the net
+        self.z_layers = []              #array of inputs into a node
+        self.error_layers = []          #array of errors on a node
 
     def set_inputs(self,inputs):
+        """
+        Sets an input's value
+        """
         self.node_layers[0] = np.array(inputs)
         
     def add_node_layer(self, values, biases, layer_num):
+        """
+        Sets an input's value, bias and error
+        """
         self.node_layers.append(values)
         self.bias_layers.append(biases)
         self.z_layers.append(np.zeros(len(values)))
         self.error_layers.append(np.zeros(len(values)))
 
     def add_connection_layer(self, data, layer_num):
+        """
+        Creates an array of weights
+        """
         self.connection_layers.append(data)
 
     def compute_value(self, layer, node):
+        """
+        Calculating sigmoid function sum on a node
+        """
         z = 0
         for c in range(len(self.connection_layers[layer-1][node])):
             z += self.node_layers[layer-1][c]*self.connection_layers[layer-1][node][c]

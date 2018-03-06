@@ -1,13 +1,5 @@
 from Builder import*
 
-def generate_net(structure, inputs):
-    """
-    Generates a neural net with the given parameters
-    """
-    builder = Builder(structure, inputs)
-    net = builder.get_net()
-    return net
-
 def propagate(net):
     """
     Does a single forward propagation for all nodes
@@ -29,7 +21,6 @@ def output_error(net,answers):
         derivative_error[i] = derivative_sigmoid(net.z_layers[-1][i])
         total_error += cost_funcion(net.node_layers[-1][i], answers[i])
     net.error_layers[-1] = np.multiply(output_error,derivative_error)
-    #print("Total Error: "+str(total_error))
     return (net,total_error)
 
 def hidden_error(net):

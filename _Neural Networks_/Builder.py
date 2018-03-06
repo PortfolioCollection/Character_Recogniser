@@ -11,6 +11,10 @@ class Builder:
         self.layer_sizes = layer_sizes
         
     def generate_net(self):
+        """
+        First creates an input layer
+        and then all the other layers node/connections
+        """
         #Input Layer
         inputs = np.zeros(self.layer_sizes[0])
         biases = np.random.uniform(-1,1,self.layer_sizes[0])
@@ -22,7 +26,6 @@ class Builder:
             connections = np.random.uniform(-1,1,(self.layer_sizes[i],self.layer_sizes[i-1]))
             self.net.add_node_layer(data, biases, i)
             self.net.add_connection_layer(connections, i)
-            #print(connections)
         return self.net
 
     
@@ -35,11 +38,5 @@ if __name__ == "__main__":
     net = builder.generate_net()
     net.set_inputs(list(range(3)))
     net.show(0,2)
-    
-    #connections = collect_connections_weights(net)
-    #print(connections)
-    #layer1 = np.array([[1,21],[54,32],[42,12]])
-    #layer2 = np.array([[43,62,75],[85,23,95]])
-    #net = mass_set_connections(net,np.array([layer1,layer2]))
     
 
