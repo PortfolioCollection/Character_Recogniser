@@ -1,115 +1,71 @@
 import math
 import random
 import Visualizer
+import numpy as np
 
 class Neaural_Net:
     """
     A neural net representation with input, hidden and output layers
     """
-    def __init__(self):
+    def __init__(self, num_layers):
         self.layer_sizes = []
-        self.layers = []
-        self.count = 0
-        
-    def add_layer(self):
-        self.layers.append([])
-
-    def add_input_node(self,value):
-        self.layers[0].append(Sigmoid_Node(self.count,None,value))
-        self.count+=1
-
-    def add_hidden_node(self,layer):
-        """
-        Adds a hidden node to the specified layer
-        """
-        global count
-        self.layers[layer].append(Sigmoid_Node(self.count,random.uniform(-1, 1)))
-        self.count+=1
-
-    def add_output_node(self):
-        global count
-        self.layers[len(self.layers)-1].append(Sigmoid_Node(self.count))
-        self.count+=1
-
-    def connect(self,node1,node2,weight):
-        """
-        Makes a wire between two given nodes with a given weight
-        """
-        connection = Wire(node1,node2,weight)
-        node1.connections[1].append(connection)
-        node2.connections[0].append(connection)
+        self.node_layers = []
+        self.bias_layers = []
+        self.connection_layers = []
+        self.z_layers = []
+        self.error_layers = []
 
     def set_inputs(self,inputs):
-        """
-        Sets the inputs values for the input layes
-        """
-        count = 0
-        for node in self.layers[0]:
-            node.value = inputs[count]
-            count+=1
-
-    def __str__(self):
-        return str(self.layers)
-
-class Node():
-    """
-    A simple node with a value and an error
-    """
-    def __init__(self, index, value = 0):
-        self.index = index
-        self.value = value
-        self.error = 0
-        self.connections = [[],[]] #[[inputs],[outputs]]
-
-    def compute_value(self,wires):
-        self.value = 0
-        for wire in wires:
-            self.value += wire.back_node.value * wire.weight
-
-    def __str__(self):
-        return "Value: "+str(self.value)+"   Index :"+str(self.index)+"   Connections: "+str(self.connections)
-
-class Sigmoid_Node(Node):
-    """
-    A sigmoid node with an aditional bias
-    """
-    def __init__(self,index,bias=0,value=0):
-        Node.__init__(self,index,value)
-        self.bias = bias
-        self.z = None
-
-    def compute_value(self,wires):
-        self.z = 0
-        for wire in wires:
-            self.z += wire.back_node.value * wire.weight
-        self.z += self.bias
-        self.value = self.sigmoid(self.z)
-
-    def compute_error(self):
-        return self.derivative_sigmoid(self.z)
-
-    def sigmoid(self,z):
-        return 1/(1+math.exp(-z))
-
-    def derivative_sigmoid(self,z):
-        return self.sigmoid(z)*(1-self.sigmoid(z))
-
-    def __str__(self):
-        return "Bias: " + str(self.bias) + " " + Node.__str__(self)
-
-class Wire():
-    """
-    A connection between two nodes
-    """
-    def __init__(self, back_node, front_node, weight = 0):
-        self.weight = weight
-        self.back_node = back_node
-        self.front_node = front_node
-
-    def set_weight(self,weight):
-        self.weight = weight
-
-    def __str__(self):
-        return "Back Node: "+str(self.back_node.index)+" Front Node: "+str(self.front_node.index)+" Weight: "+str(self.weight)
+        self.node_layers[0] = np.array(inputs)
         
+    def add_node_layer(self, values, biases, layer_num):
+        self.node_layers.append(values)
+        self.bias_layers.append(biases)
+        self.z_layers.append(np.zeros(len(values)))
+        self.error_layers.append(np.zeros(len(values)))
+
+    def add_connection_layer(self, data, layer_num):
+        self.connection_layers.append(data)
+
+    def compute_value(self, layer, node):
+        z = 0
+        for c in range(len(self.connection_layers[layer-1][node])):
+            z += self.node_layers[layer-1][c]*self.connection_layers[layer-1][node][c]
+        z+=self.bias_layers[layer][node]
+        self.z_layers[layer][node] = z
+        self.node_layers[layer][node] = sigmoid(z)
+
     
+    def __str__(self):
+        return str(self.node_layers)
+
+    def show(self,start,end):
+        """
+        Runs the visualizer on the net
+
+        [0,1,2,3,4,5,6,7]
+
+        net.show(3,5) shows layers 3,4,5
+        
+        """
+        layer_sizes = []
+        nodes = []
+        for layer in self.node_layers[start:end+1]:
+            layer_sizes.append(len(layer))
+            for node in layer:
+                nodes.append(node)
+        weights = []
+        for layer in self.connection_layers[start:end]:
+            layer_t = layer.transpose()
+            for output_node in layer_t:
+                for connection in output_node:
+                    weights.append(connection)
+        Visualizer.draw_neural_net(0.1, 1, 0, 1, layer_sizes, nodes, weights)
+    
+
+def sigmoid(z):
+    return 1/(1+math.exp(-z))
+
+def derivative_sigmoid(z):
+    return sigmoid(z)*(1-sigmoid(z))
+
