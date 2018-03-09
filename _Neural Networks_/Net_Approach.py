@@ -68,15 +68,20 @@ def derivative_cost(prediction, answer):
     return  prediction - answer
     
 if __name__ == "__main__":
-    builder = Builder([3,2,3])
+    builder = Builder([3,2,5,2,3])
     net = builder.generate_net()
-    net.set_inputs(list(range(3)))
-    for i in range(30):
+    for i in range(30000):
+        lst = [0,0,0]
+        put = random.randint(0,2)
+        lst[put] = 1
+        net.set_inputs(lst)
         net = propagate(net)
-        net, total_error = output_error(net,np.array([1,1,1]))
+        net, total_error = output_error(net,np.array(lst))
         net = hidden_error(net)
-        net = improve_bias(net,0.5,1)
-        net = improve_weights(net,0.5,1)
-        net.show(0,2)
-    
+        net = improve_bias(net,1,1)
+        net = improve_weights(net,1,1)
+    lst = [1,0,1]
+    net.set_inputs(lst)
+    net = propagate(net)
+    net.show(0,4)
     

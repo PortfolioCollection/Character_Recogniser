@@ -18,14 +18,14 @@ class Builder:
         #Input Layer
         inputs = np.zeros(self.layer_sizes[0])
         biases = np.random.uniform(-1,1,self.layer_sizes[0])
-        self.net.add_node_layer(inputs, biases, 0)
+        self.net.add_node_layer(inputs, biases)
         #Hidden Layer and Output Layer
         for i in range(1,self.length):
             data = np.zeros(self.layer_sizes[i])
             biases = np.random.uniform(-1,1,self.layer_sizes[i])
             connections = np.random.uniform(-1,1,(self.layer_sizes[i],self.layer_sizes[i-1]))
-            self.net.add_node_layer(data, biases, i)
-            self.net.add_connection_layer(connections, i)
+            self.net.add_node_layer(data, biases)
+            self.net.add_connection_layer(connections)
         return self.net
 
     
@@ -38,5 +38,3 @@ if __name__ == "__main__":
     net = builder.generate_net()
     net.set_inputs(list(range(3)))
     net.show(0,2)
-    
-

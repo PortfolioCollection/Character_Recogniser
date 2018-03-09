@@ -21,7 +21,7 @@ class Neaural_Net:
         """
         self.node_layers[0] = np.array(inputs)
         
-    def add_node_layer(self, values, biases, layer_num):
+    def add_node_layer(self, values, biases):
         """
         Sets an input's value, bias and error
         """
@@ -30,7 +30,7 @@ class Neaural_Net:
         self.z_layers.append(np.zeros(len(values)))
         self.error_layers.append(np.zeros(len(values)))
 
-    def add_connection_layer(self, data, layer_num):
+    def add_connection_layer(self, data):
         """
         Creates an array of weights
         """
@@ -43,6 +43,7 @@ class Neaural_Net:
         z = 0
         for c in range(len(self.connection_layers[layer-1][node])):
             z += self.node_layers[layer-1][c]*self.connection_layers[layer-1][node][c]
+            #print("C: {} node:{} connection:{}".format(c,self.node_layers[layer-1][c],self.connection_layers[layer-1][node][c]))
         z+=self.bias_layers[layer][node]
         self.z_layers[layer][node] = z
         self.node_layers[layer][node] = sigmoid(z)
@@ -50,6 +51,12 @@ class Neaural_Net:
     
     def __str__(self):
         return str(self.node_layers)
+
+    def print_connections(self):
+        print(self.connection_layers)
+
+    def print_biases(self):
+        print(self.bias_layers)
 
     def show(self,start,end):
         """
