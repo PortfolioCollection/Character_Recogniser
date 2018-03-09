@@ -80,7 +80,7 @@ if __name__ == "__main__":
         net = hidden_error(net)
         net = improve_bias(net,1,1)
         net = improve_weights(net,1,1)
-    lst = [1,0,1]
+    lst = [1,0,0]
     net.set_inputs(lst)
     net = propagate(net)
     net.show(0,4)
