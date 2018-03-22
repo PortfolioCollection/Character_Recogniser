@@ -4,84 +4,76 @@ def propagate(net):
     """
     Does a single forward propagation for all nodes
     """
-    for l in range(1,len(net.node_layers)):         #for layer in layers
-        for n in range(len(net.node_layers[l])):    #for node in layer
-            net.compute_value(l,n)
+    for l in range(1,len(net.activation_layers)):         #for layer in layers
+        net.compute_value(l)
     return net
 
 def output_error(net,answers):
-    """
-    Calculates the error on all the output neurons by the cost function
-    """
-    total_error = 0
-    output_error = np.zeros(len(answers))
-    derivative_error = np.zeros(len(answers))
-    for i in range(len(output_error)):
-        output_error[i] = derivative_cost(net.node_layers[-1][i], answers[i])
-        derivative_error[i] = derivative_sigmoid(net.z_layers[-1][i])
-        total_error += cost_funcion(net.node_layers[-1][i], answers[i])
-    net.error_layers[-1] = np.multiply(output_error,derivative_error)
-    return (net,total_error)
+    delta = derivative_cost(net.activation_layers[-1],answers)*sigmoid_prime(net.z_layers[-1])
+    #print(derivative_cost(net.activation_layers[-1],answers))
+    net.delta_layers[-1] = delta
+    t_delta = np.expand_dims(delta, axis=1)
+    t_activation_layers = np.expand_dims(net.activation_layers[-2], axis=1)
+    #print(delta)
+    #print(net.activation_layers[-2].transpose())
+    net.weight_errors[-1] = np.dot(t_delta,t_activation_layers.transpose())
+    return net
 
 def hidden_error(net):
-    """
-    Calculates the error on all the output neurons by the cost function
-    """
-    
-    for r in range(len(net.node_layers)-2,0,-1):
-        weighting = np.dot(net.connection_layers[r].transpose(),net.error_layers[r+1])
-        derivative_weigth = np.zeros(len(net.node_layers[r]))
-        for i in range(len(net.node_layers[r])):
-            derivative_weigth[i] = derivative_sigmoid(net.z_layers[r][i])
-        net.error_layers[r] = np.multiply(weighting,derivative_weigth)
+    #print(len(net.layer_sizes))
+    for l in range(2,len(net.layer_sizes)):
+        sp = sigmoid_prime(net.z_layers[-l])
+        send_back = np.dot(net.weight_layers[-l+1].transpose(),net.delta_layers[-l+1])
+        net.delta_layers[-l] = np.multiply(send_back,sp)
+        t_delta = np.expand_dims(net.delta_layers[-l], axis=1)
+        t_activation_layers = np.expand_dims(net.activation_layers[-l-1], axis=1)
+        net.weight_errors[-l] += np.dot(t_delta, t_activation_layers.transpose())
     return net
 
 def improve_bias(net,learning_rate,size):
-    """
-    Chenges the bias of a node based on the errors of the next layer
-    """
-    for l in range(len(net.bias_layers)):
-        for b in range(len(net.bias_layers[l])):
-            net.bias_layers[l][b] -= (learning_rate/size)*net.error_layers[l][b]
-            #print("Bias [{0},{1}]: {2}".format(l,b,net.bias_layers[l][b]))
-    #print("---------------------")
+    net.bias_layers = [b-(learning_rate/size)*nb
+                       for b, nb in zip(net.bias_layers, net.delta_layers)]
     return net
 
 def improve_weights(net,learning_rate,size):
-    """
-    Chenges the weights of a node based on the errors of the next layer
-    """
-    for l in range(len(net.connection_layers)):
-        for n in range(len(net.connection_layers[l])):
-            for w in range(len(net.connection_layers[l][n])):
-                error = net.node_layers[l][w]*net.error_layers[l+1][n]
-                net.connection_layers[l][n][w] -= (learning_rate/size)* error
-                #print("Weight [{0},{1},{2}]: {3}".format(l,n,w,net.connection_layers[l][n][w]))
-    #print("---------------------")
+    net.weight_layers = [w-(learning_rate/size)*nw
+                        for w, nw in zip(net.weight_layers, net.weight_errors)]
     return net
 
 def cost_funcion(prediction, answer):
-    return (1/2)*(prediction - answer)**2
-    
+    return (1/2)(answer-prediction)**2
 
 def derivative_cost(prediction, answer):
-    return  prediction - answer
+    return (prediction-answer)
     
 if __name__ == "__main__":
-    builder = Builder([3,2,5,2,3])
+    layers = [3,3,3]
+    builder = Builder(layers)
     net = builder.generate_net()
-    for i in range(30000):
-        lst = [0,0,0]
-        put = random.randint(0,2)
-        lst[put] = 1
-        net.set_inputs(lst)
-        net = propagate(net)
-        net, total_error = output_error(net,np.array(lst))
-        net = hidden_error(net)
-        net = improve_bias(net,1,1)
-        net = improve_weights(net,1,1)
+
+    num = 300
+    size = 100
+    
+    for i in range(num):
+        for j in range(size):
+            lst = [0,0,0]
+            lst[0] = random.randint(0,1)
+            lst[1] = random.randint(0,1)
+            lst[2] = random.randint(0,1)
+            net.set_inputs(lst)
+            net = propagate(net)
+            net = output_error(net,np.array(lst))
+            net = hidden_error(net)
+        net = improve_bias(net,1,size)
+        net = improve_weights(net,1,size)
+        net.delta_layers = [np.zeros(b.shape) for b in net.delta_layers]
+        net.weight_errors = [np.zeros(w.shape) for w in net.weight_errors]
     lst = [1,0,0]
     net.set_inputs(lst)
     net = propagate(net)
-    net.show(0,4)
+    #print(net.delta_layers)
+    #print(net.weight_errors)
+    #print(net.weight_layers)
+    #print(net.activation_layers)
+    net.show(0,len(layers)-1)
     

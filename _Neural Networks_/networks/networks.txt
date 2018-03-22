@@ -1,0 +1,2 @@
+3900 - [28*28,16,16,10] learning rate: 10 size 1 num 1000
+8726 - [28*28,30,10] learning rate: 10 size 100 num 100

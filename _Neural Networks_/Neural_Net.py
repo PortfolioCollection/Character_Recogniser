@@ -7,57 +7,46 @@ class Neaural_Net:
     """
     A neural net representation with input, hidden and output layers
     """
-    def __init__(self, num_layers):
-        self.layer_sizes = []           #format of the net
-        self.node_layers = []           #array of values in the net
+    def __init__(self, layer_sizes):
+        self.layer_sizes = layer_sizes  #format of the net
         self.bias_layers = []           #array of bias in the net
-        self.connection_layers = []     #array of weights in the net
+        self.weight_layers = []         #array of weights in the net
         self.z_layers = []              #array of inputs into a node
-        self.error_layers = []          #array of errors on a node
+        self.activation_layers = []     #array of values in the net
+
+        self.delta_layers = []          #array of errors on a node
+        self.weight_errors = []         #array of errors on a connection
 
     def set_inputs(self,inputs):
         """
         Sets an input's value
         """
-        self.node_layers[0] = np.array(inputs)
+        self.activation_layers[0] = np.array(inputs)
         
     def add_node_layer(self, values, biases):
         """
         Sets an input's value, bias and error
         """
-        self.node_layers.append(values)
+        self.activation_layers.append(values)
         self.bias_layers.append(biases)
-        self.z_layers.append(np.zeros(len(values)))
-        self.error_layers.append(np.zeros(len(values)))
+        self.z_layers.append(np.zeros(len(values), dtype=float))
+        self.delta_layers.append(np.zeros(len(values), dtype=float))
 
     def add_connection_layer(self, data):
         """
         Creates an array of weights
         """
-        self.connection_layers.append(data)
+        self.weight_layers.append(data)
+        self.weight_errors.append(np.zeros(data.shape))
 
-    def compute_value(self, layer, node):
+    def compute_value(self, l):
         """
         Calculating sigmoid function sum on a node
         """
-        z = 0
-        for c in range(len(self.connection_layers[layer-1][node])):
-            z += self.node_layers[layer-1][c]*self.connection_layers[layer-1][node][c]
-            #print("C: {} node:{} connection:{}".format(c,self.node_layers[layer-1][c],self.connection_layers[layer-1][node][c]))
-        z+=self.bias_layers[layer][node]
-        self.z_layers[layer][node] = z
-        self.node_layers[layer][node] = sigmoid(z)
-
-    
-    def __str__(self):
-        return str(self.node_layers)
-
-    def print_connections(self):
-        print(self.connection_layers)
-
-    def print_biases(self):
-        print(self.bias_layers)
-
+        self.z_layers[l] = np.dot(self.weight_layers[l-1],self.activation_layers[l-1])
+        self.activation_layers[l] = sigmoid(self.z_layers[l]+self.bias_layers[l])
+            
+        
     def show(self,start,end):
         """
         Runs the visualizer on the net
@@ -69,12 +58,12 @@ class Neaural_Net:
         """
         layer_sizes = []
         nodes = []
-        for layer in self.node_layers[start:end+1]:
+        for layer in self.activation_layers[start:end+1]:
             layer_sizes.append(len(layer))
             for node in layer:
-                nodes.append(node)
+                nodes.append(round(node,3))
         weights = []
-        for layer in self.connection_layers[start:end]:
+        for layer in self.weight_layers[start:end]:
             layer_t = layer.transpose()
             for output_node in layer_t:
                 for connection in output_node:
@@ -83,8 +72,12 @@ class Neaural_Net:
     
 
 def sigmoid(z):
-    return 1/(1+math.exp(-z))
+    """The sigmoid function."""
+    return 1.0/(1.0+np.exp(-z))
 
-def derivative_sigmoid(z):
+def sigmoid_prime(z):
+    """Derivative of the sigmoid function."""
     return sigmoid(z)*(1-sigmoid(z))
+
+
 

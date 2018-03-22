@@ -15,16 +15,15 @@ import numpy as np
 network = None
 batches = 0
 
-def train_images(size,num,layers):
+def train_images(size,num,learning_rate,layers):
     """
     Trains the neural net for num batches of size number of images in each
     """
     count = 0
-    error_layer = [0,0,0,0,0,0,0,0,0,0]
     os.chdir('..')
     root = os.getcwd()
     answer_array = read_answers()
-
+    average_error = 0
     global batches
     global network
     if network is None:
@@ -33,30 +32,30 @@ def train_images(size,num,layers):
     os.chdir(root +"/train_images")
     for b in range(num):
         for s in range(size):   #one loop is a batch
-            network, img_num = load_image(network)
+            network, img_num = load_image(network,s)
             #Transform an answer like 3 into [0,0,0,1,0,0,0,0,0,0]
             correct_array = np.zeros((10,), dtype=int)
             correct_array[int(answer_array[img_num-1])] = 1
+            #print(correct_array)
             #Propagate input forward
             network = propagate(network)
             #Add up all the errors for each output node for size number of iterations
-            network, total_error = output_error(network,correct_array)
-            for i in range(len(error_layer)):
-                error_layer[i] += network.error_layers[-1][i]
-            
-        total_error = 0
-        #Sets the averaged error per output node
-        for i in range(len(error_layer)):
-            total_error+=error_layer[i]
-            #Set the output error to the average error of that node for entire batch
-            network.error_layers[-1][i] = error_layer[i]
-        print("Total Error: "+str(total_error)+" batch:"+str(batches + 1))
-        #Improve the net based on the output error
-        network = improve_net(network,1,size)
-        #Reinitialize values for next batch
+            network = output_error(network,correct_array)
+            #average_error += total_error
+            network = hidden_error(network)
+        
+        #print(average_error/size)
+        #print(correct_array)
+        #network.show(3,3)
+        #print(network.weight_errors[0][0])
+        ##print(network.error_layers)
+        network = improve_bias(network,learning_rate,size)
+        network = improve_weights(network,learning_rate,size)
+        network.delta_layers = [np.zeros(b.shape) for b in network.delta_layers]
+        network.weight_errors = [np.zeros(w.shape) for w in network.weight_errors]
+        average_error = 0
         batches += 1
-        error_layer = [0,0,0,0,0,0,0,0,0,0]
-
+        #print(network.error_layers[-1])
 
     return network
 
@@ -72,7 +71,7 @@ def read_answers():
         answer_array.append(int(line.strip()))
     return answer_array
 
-def load_image(network):
+def load_image(network,s):
     """
     Generates a random number between 1 and 60000 and set's the network's input
     """
@@ -80,10 +79,39 @@ def load_image(network):
     num_zeros = 5-len(str(img_num))
     zeros = '0'*num_zeros
     filename = zeros+str(img_num)+".tif"
+    #img_num = 11534
+    #filename = str(img_num)+".tif"
+    
+    #print(filename)
     image = Extractor.getImage(filename)
     matrix = Extractor.ImageToMatrix(image)
     data = np.asarray(matrix).flatten()
+    """
+    count = 0
+    for item in data:
+        if count>=28:
+            count = 0
+            print()
+        print(str(item)+(3-len(str(item)))*" "+" ",end="")
+        count+=1
+    print()
+    print()
+    """
     data = scale_data(data)
+    #print()
+    """
+    count = 0
+    for item in data:
+        if count>=28:
+            count = 0
+            print()
+        print(str(round(item,1))+(3-len(str(item)))*" "+" ",end="")
+        count+=1
+    print()
+    print()
+    """
+    #exit()
+    
     network.set_inputs(data)
     return (network,img_num)
 
@@ -93,8 +121,15 @@ def scale_data(grayscale):
     """
     r = np.zeros((len(grayscale)), dtype=float)
     for i in range(len(grayscale)):
-        r[i] = 1 - (grayscale[i] / 255)
-    return r
+        result = 1 - (grayscale[i] / 255)
+        r[i] = result
+        """
+        if result > 0.1:
+            r[i] = 1
+        else:
+            r[i] = 0
+        """
+    return r.tolist()
 
 def improve_net(network,learning_rate,size):
     """
@@ -112,10 +147,10 @@ def run_test(network,scaled_grayscale):
     """
     network.set_inputs(scaled_grayscale)
     network = propagate(network)
-    maximum = network.node_layers[-1][0]
+    maximum = network.activation_layers[-1][0]
     index = 0
     count = 0
-    for node in network.node_layers[-1]:
+    for node in network.activation_layers[-1]:
         if node > maximum:
             maximum = node
             index = count
@@ -124,9 +159,12 @@ def run_test(network,scaled_grayscale):
 
 if __name__ == "__main__":
     reset = False
-    train = True
+    train = False
     test = True
-    stop_at = 100
+    stop_at = 10000
+    size = 100
+    num = 100
+    learning_rate = 3
     
     if reset:
         if os.path.isfile("network.p"):
@@ -136,7 +174,7 @@ if __name__ == "__main__":
         (network,batches) = pickle.load(open("network.p", "rb"))
 
     if train:
-        network = train_images(100,100,[28*28,20,20,10])
+        network = train_images(size,num,learning_rate,[28*28,30,10])
         print("done training")
         os.chdir('..')
         os.chdir(os.getcwd() + "/_Neural Networks_")
